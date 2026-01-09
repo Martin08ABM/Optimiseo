@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-title: var(--atkinson-hyperlegible);
+  --font-sans: var(--google-sans-code);
+}
+
+body {
+  background-color: #000;
+}
