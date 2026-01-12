@@ -35,26 +35,23 @@ export default async function MainDashboard() {
 
   const userRole = roleData?.role || "Sin rol asignado";
 
-  // Fecha del útlimo inicio de sesión
-  const userLastSingIn = user?.last_sign_in_at;
-  const dateLastSignIn = new Date(userLastSingIn)
+  // Función para formatear fechas de forma segura
+  const formatDate = (dateString: string | undefined): string => {
+    if (!dateString) return 'No disponible';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Fecha inválida';
+    return new Intl.DateTimeFormat('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(date).replace(/\//g, '-');
+  };
 
-  const formattedDate = new Intl.DateTimeFormat('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).format(dateLastSignIn).replace(/\//g, '-'); 
-
+  // Fecha del último inicio de sesión
+  const formattedDate = formatDate(user?.last_sign_in_at);
 
   // Fecha de creación de la cuenta
-  const userCreatedAt = user?.created_at;
-  const dateCreatedAt = new Date(userCreatedAt)
-
-  const formattedDateCreatedAt = new Intl.DateTimeFormat('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).format(dateCreatedAt).replace(/\//g, '-'); 
+  const formattedDateCreatedAt = formatDate(user?.created_at); 
 
 
   return (
