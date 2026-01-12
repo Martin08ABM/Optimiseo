@@ -25,11 +25,6 @@ export default async function MainDashboard() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const userEmail = user?.email
-  const resterPassword = await supabase.auth.resetPasswordForEmail( userEmail!, {
-    redirectTo: 'http://localhost:3000/auth/ResetPassword',
-  })
-
   if (!user) return null;
 
   const { data: roleData } = await supabase
@@ -96,7 +91,7 @@ export default async function MainDashboard() {
       </section>
 
       {/* Seguridad y acceso a la cuenta */}
-      <section>
+      <section className="mt-8">
         <p className="text-2xl font-title font-extrabold text-neutral-100">
           Seguridad y acceso:
         </p>
@@ -105,7 +100,7 @@ export default async function MainDashboard() {
           <div className="flex flex-col gap-y-4">
 
             <p>
-              Cambiar contraseña: <Link href={resterPassword} className="hover:text-blue-400 transition-colors duration-150">clica aquí</Link>
+              Cambiar contraseña: <Link href="/auth/ResetPassword" className="text-blue-400 hover:text-blue-700 transition-colors duration-150">clica aquí</Link>
             </p>
 
           </div>
