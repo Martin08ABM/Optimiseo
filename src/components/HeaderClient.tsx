@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/src/lib/supabase/client";
 import MobileMenu from "./MobileMenu";
+import type { User } from "@supabase/supabase-js";
 
 export default function HeaderClient() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 

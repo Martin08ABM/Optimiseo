@@ -14,7 +14,7 @@ import Header from "@/src/components/Header";
 
 export default async function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950 min-w-full">
       <Header />
       <Hero />
     </div>

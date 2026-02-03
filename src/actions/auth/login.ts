@@ -34,5 +34,11 @@ export async function loginAction(formData: FormData): Promise<AuthResponse | vo
     return { error: error.message }
   }
 
+  const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+
+  if (aalData && aalData.nextLevel === 'aal2' && aalData.currentLevel !== 'aal2') {
+    redirect('/auth/mfa-verify')
+  }
+
   redirect('/')
 }

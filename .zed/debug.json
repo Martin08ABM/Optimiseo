@@ -1,0 +1,18 @@
+// Project-local debug tasks
+//
+// For more documentation on how to configure debug tasks,
+// see: https://zed.dev/docs/debugger
+[
+  {
+    "adapter": "JavaScript",
+    "label": "package.json > build",
+    "request": "launch",
+    "type": "pwa-node",
+    "args": ["run", "build"],
+    "cwd": "/home/martin/Proyectos/ProyectosActuales/optimiseo",
+    "runtimeExecutable": "$ZED_CUSTOM_TYPESCRIPT_RUNNER",
+    "env": {},
+    "runtimeArgs": ["--inspect-brk"],
+    "console": "integratedTerminal",
+  },
+]

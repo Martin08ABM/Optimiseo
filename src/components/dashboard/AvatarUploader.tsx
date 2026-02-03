@@ -37,7 +37,7 @@ export default function AvatarUploader() {
       }
     };
     loadAvatar();
-  }, []);
+  }, [supabase.auth]);
 
   /**
    * Maneja el cambio de archivo y la subida del avatar
@@ -78,18 +78,19 @@ export default function AvatarUploader() {
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(filePath);
-      
+
         await supabase.auth.updateUser({ data: { avatar_url: publicUrl } });
 
-        const { data: sessionData, error: refreshError } = await supabase.auth.refreshSession();
+        const { error: refreshError } = await supabase.auth.refreshSession();
         if (refreshError) throw refreshError;
 
         window.dispatchEvent(new Event('avatarUpdated'));
       alert("¡Avatar actualizado! 🎉");
-      
-    } catch (error: any) {
+
+    } catch (error: unknown) {
       console.error("Error:", error);
-      alert(error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Error al subir avatar';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }

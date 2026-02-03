@@ -33,6 +33,7 @@ export async function updateSession(request: NextRequest) {
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/auth')
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard')
+  const isMFAVerifyRoute = request.nextUrl.pathname === '/auth/mfa-verify'
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone()
@@ -40,7 +41,17 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && isAuthRoute) {
+  if (user && isProtectedRoute && !isMFAVerifyRoute) {
+    const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+
+    if (aalData && aalData.nextLevel === 'aal2' && aalData.currentLevel !== 'aal2') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth/mfa-verify'
+      return NextResponse.redirect(url)
+    }
+  }
+
+  if (user && isAuthRoute && !isMFAVerifyRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)

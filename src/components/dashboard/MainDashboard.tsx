@@ -1,8 +1,8 @@
 /**
  * Componente MainDashboard - Panel principal del usuario
- * 
+ *
  * Este componente muestra la información del perfil del usuario autenticado.
- * 
+ *
  * Características:
  * - Obtiene y muestra información del usuario desde Supabase
  * - Consulta el rol del usuario desde la tabla user_roles
@@ -10,7 +10,7 @@
  * - Muestra el email del usuario
  * - Muestra el rol asignado (basic, premium, admin, etc.)
  * - Incluye logs de debug para facilitar el desarrollo
- * 
+ *
  * @component
  * @returns {Promise<JSX.Element | null>} Panel de usuario o null si no está autenticado
  */
@@ -20,22 +20,30 @@
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import AvatarUploader from "./AvatarUploader";
 import Link from "next/link";
+import { MFASettings } from '@/src/components/MFASettings'
 
 export default async function MainDashboard() {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    return (
+      <div className="flex flex-col mx-auto mt-6 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+        <p className="text-red-400 text-center">Error al cargar la información del usuario</p>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
-  const { data: roleData } = await supabase
+  const { data: roleData, error: roleError } = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  const userRole = roleData?.role || "Sin rol asignado";
+  const userRole = roleError ? "Error al cargar rol" : (roleData?.role || "Sin rol asignado");
 
-  // Función para formatear fechas de forma segura
   const formatDate = (dateString: string | undefined): string => {
     if (!dateString) return 'No disponible';
     const date = new Date(dateString);
@@ -47,11 +55,9 @@ export default async function MainDashboard() {
     }).format(date).replace(/\//g, '-');
   };
 
-  // Fecha del último inicio de sesión
   const formattedDate = formatDate(user?.last_sign_in_at);
 
-  // Fecha de creación de la cuenta
-  const formattedDateCreatedAt = formatDate(user?.created_at); 
+  const formattedDateCreatedAt = formatDate(user?.created_at);
 
 
   return (
@@ -65,7 +71,7 @@ export default async function MainDashboard() {
 
         <div className="flex flex-row text-md text-white mt-2 ml-4">
           <div className="flex flex-col gap-y-4">
-            
+
             <AvatarUploader />
 
             <p>
@@ -100,6 +106,9 @@ export default async function MainDashboard() {
               Cambiar contraseña: <Link href="/auth/ResetPassword" className="text-blue-400 hover:text-blue-700 transition-colors duration-150">clica aquí</Link>
             </p>
 
+            <MFASettings />
+
+            <Link href="/" className="border-2 border-black rounded-xl px-2 py-2 bg-gray-400 text-center hover:bg-gray-500 mt-8">Volver atrás</Link>
           </div>
         </div>
       </section>

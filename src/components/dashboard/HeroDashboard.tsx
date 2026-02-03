@@ -13,7 +13,7 @@
 export default async function HeroDashboard() {
   return (
     <section className='flex flex-col items-center justify-center  mx-auto'>
-      <h1 className="text-2xl md:text-3xl font-title font-black text-black mt-4 mb-6 uppercase">Mi perfil - OPTIMISEO</h1>
+      <h1 className="text-2xl md:text-3xl font-title font-black text-white mt-4 mb-6 uppercase">Mi perfil - OPTIMISEO</h1>
       <p className="text-white">Esta zona es tu área privada</p>
     </section>
   )

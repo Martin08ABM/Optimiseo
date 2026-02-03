@@ -10,7 +10,6 @@ OptimiSEO es una herramienta diseñada para ayudar a creadores de contenido, blo
 - ✅ Detecta repetición excesiva de palabras
 - ✅ Evalúa la coherencia entre título y contenido
 - ✅ Sugiere títulos alternativos optimizados para SEO
-- ✅ Proporciona métricas detalladas y recomendaciones
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -27,6 +26,14 @@ OptimiSEO es una herramienta diseñada para ayudar a creadores de contenido, blo
   - Almacenamiento de archivos (avatares)
   - Gestión de roles de usuario
 
+### IA & Análisis
+- **Anthropic Claude Sonnet 4.5** - Modelo de IA para análisis SEO
+  - Web scraping automático con cheerio
+  - Análisis de legibilidad de contenido
+  - Detección de repetición de palabras
+  - Evaluación de coherencia del contenido
+  - Extracción de keywords y metadatos
+
 ### Herramientas de Desarrollo
 - **ESLint 9** - Linter para mantener código limpio
 - **PostCSS 8.5.6** - Procesador de CSS
@@ -36,109 +43,74 @@ OptimiSEO es una herramienta diseñada para ayudar a creadores de contenido, blo
 ```
 optimiseo/
 ├── src/
-│   ├── app/                      # Rutas y páginas de Next.js
-│   │   ├── auth/                 # Sistema de autenticación
-│   │   │   ├── login/           # Página de inicio de sesión
-│   │   │   │   ├── actions.ts   # Acciones del servidor para login
+│   ├── actions/                  # Server Actions
+│   │   └── auth/                # Acciones de autenticación
+│   │       ├── login.ts         # Lógica de inicio de sesión
+│   │       ├── register.ts      # Lógica de registro
+│   │       ├── mfa-enroll.ts    # Registro de MFA/2FA
+│   │       ├── mfa-unenroll.ts  # Desactivación de MFA
+│   │       └── mfa-verify.ts    # Verificación de códigos MFA
+│   ├── app/                     # Rutas y páginas de Next.js
+│   │   ├── api/                 # API Routes
+│   │   │   ├── ai/              # Endpoints de IA
+│   │   │   │   ├── claude/      # API de Claude (Anthropic)
+│   │   │   │   │   └── route.ts # Endpoint principal de Claude
+│   │   │   │   └── shared/      # Utilidades compartidas
+│   │   │   │       ├── prompts.ts    # Construcción de prompts
+│   │   │   │       ├── types.ts      # Tipos TypeScript de IA
+│   │   │   │       └── webSearch.ts  # Web scraping para SEO
+│   │   │   └── userTier.ts      # Gestión de roles de usuario (para el futuro)
+│   │   ├── auth/                # Páginas de autenticación
+│   │   │   ├── login/           # Inicio de sesión
 │   │   │   │   ├── form.tsx     # Formulario de login
-│   │   │   │   └── page.tsx     # Página principal de login
-│   │   │   └── register/        # Página de registro
-│   │   │       ├── actions.ts   # Acciones del servidor para registro
-│   │   │       ├── form.tsx     # Formulario de registro
-│   │   │       ├── insertUserRole.ts # Asignación de roles
-│   │   │       └── page.tsx     # Página principal de registro
+│   │   │   │   └── page.tsx     # Página de login
+│   │   │   ├── register/        # Registro de usuarios
+│   │   │   │   ├── form.tsx     # Formulario de registro
+│   │   │   │   └── page.tsx     # Página de registro
+│   │   │   ├── mfa-verify/      # Verificación MFA
+│   │   │   │   └── page.tsx     # Página de verificación 2FA
+│   │   │   └── ResetPassword/   # Recuperación de contraseña
+│   │   │       └── page.tsx     # Página de reset de password
 │   │   ├── dashboard/           # Panel de usuario
-│   │   │   ├── avatarUploader.tsx    # Componente para subir avatar
-│   │   │   ├── heroDashboard.tsx     # Hero del dashboard
-│   │   │   ├── mainDashboard.tsx     # Contenido principal del dashboard
-│   │   │   └── page.tsx              # Página del dashboard
+│   │   │   ├── loading.tsx      # Loading state del dashboard
+│   │   │   └── page.tsx         # Página principal del dashboard
 │   │   ├── globals.css          # Estilos globales
-│   │   ├── layout.tsx           # Layout principal de la aplicación
-│   │   └── page.tsx             # Página de inicio
+│   │   ├── layout.tsx           # Layout raíz de la aplicación
+│   │   └── page.tsx             # Landing page
 │   ├── components/              # Componentes reutilizables
-│   │   ├── Header.tsx           # Barra de navegación
-│   │   └── Hero.tsx             # Sección hero de la landing page
-│   └── lib/                     # Utilidades y configuraciones
-│       ├── supabaseClient.ts    # Cliente de Supabase para el navegador
-│       └── supabaseServer.ts    # Cliente de Supabase para el servidor
+│   │   ├── auth/                # Componentes de autenticación
+│   │   │   ├── LoginForm.tsx    # Formulario de login
+│   │   │   └── RegisterForm.tsx # Formulario de registro
+│   │   ├── dashboard/           # Componentes del dashboard
+│   │   │   ├── AvatarUploader.tsx   # Subida de avatar
+│   │   │   ├── HeroDashboard.tsx    # Hero del dashboard
+│   │   │   └── MainDashboard.tsx    # Contenido principal
+│   │   ├── Header.tsx           # Barra de navegación principal
+│   │   ├── HeaderClient.tsx     # Lógica cliente del header
+│   │   ├── Hero.tsx             # Hero de landing + analizador SEO
+│   │   ├── MobileMenu.tsx       # Menú responsive
+│   │   ├── MFAEnrollDialog.tsx  # Diálogo para activar 2FA
+│   │   ├── MFASettings.tsx      # Configuración de MFA
+│   │   └── MFAVerifyDialog.tsx  # Diálogo de verificación 2FA
+│   ├── lib/                     # Utilidades y configuraciones
+│   │   ├── supabase/            # Configuración de Supabase
+│   │   │   ├── client.ts        # Cliente para navegador
+│   │   │   ├── server.ts        # Cliente para servidor
+│   │   │   └── proxy.ts         # Proxy de Supabase
+│   │   └── rateLimit.ts         # Rate limiting para seguridad
+│   ├── types/                   # Definiciones de tipos
+│   │   ├── auth.ts              # Tipos de autenticación
+│   │   └── user.ts              # Tipos de usuario
+│   └── utils/                   # Funciones utilitarias
+│       └── validation.ts        # Validaciones de formularios
 ├── public/                      # Archivos estáticos
 ├── .env.local                   # Variables de entorno (no incluido en git)
+├── MFA_DOCUMENTATION.md         # Documentación del sistema MFA
 ├── next.config.ts               # Configuración de Next.js
 ├── tailwind.config.ts           # Configuración de Tailwind CSS
 ├── tsconfig.json                # Configuración de TypeScript
 └── package.json                 # Dependencias y scripts
-
 ```
-
-## 🚀 Instalación y Configuración
-
-### Prerrequisitos
-- Node.js 20 o superior
-- npm, pnpm o yarn
-- Cuenta de Supabase
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
-```bash
-git clone <url-del-repositorio> Poner la URL del repositorio de Github
-cd optimiseo
-```
-
-2. **Instalar dependencias**
-```bash
-npm install
-# o
-pnpm install
-# o
-yarn install
-```
-
-3. **Configurar variables de entorno**
-
-Crear un archivo `.env.local` en la raíz del proyecto con las siguientes variables:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=tu_clave_publicable
-```
-
-4. **Configurar Supabase**
-
-En tu proyecto de Supabase, crea las siguientes tablas:
-
-**Tabla: user_roles**
-```sql
-CREATE TABLE user_roles (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  role TEXT NOT NULL DEFAULT 'basic',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**Bucket de Storage: avatars**
-- Crear un bucket público llamado "avatars"
-- Configurar políticas de acceso para permitir subida y lectura
-
-5. **Ejecutar en modo desarrollo**
-```bash
-npm run dev
-# o
-pnpm dev
-# o
-yarn dev
-```
-
-La aplicación estará disponible en `http://localhost:3000`
-
-## 📝 Scripts Disponibles
-
-- `npm run dev` - Inicia el servidor de desarrollo
-- `npm run build` - Construye la aplicación para producción
-- `npm run start` - Inicia el servidor de producción
-- `npm run lint` - Ejecuta el linter para verificar el código
 
 ## 🔐 Sistema de Autenticación
 
@@ -147,8 +119,10 @@ El proyecto implementa un sistema completo de autenticación con:
 - **Registro de usuarios** con validación de contraseñas
 - **Inicio de sesión** con email y contraseña
 - **Gestión de sesiones** mediante cookies seguras
-- **Sistema de roles** (basic, premium, admin)
 - **Subida de avatares** con almacenamiento en Supabase Storage
+- **Autenticación de dos factores (2FA/MFA)** con códigos TOTP
+- **Rate limiting** para prevenir ataques de fuerza bruta
+- **Recuperación de contraseña** mediante email
 
 ### Requisitos de Contraseña
 - Mínimo 8 caracteres
@@ -185,25 +159,8 @@ Las contribuciones son bienvenidas. Por favor:
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
-
-Este proyecto es privado y está en desarrollo.
-
 ## 👨‍💻 Autor
 
 Desarrollado con ❤️ por Martin Adolfo Bravo Montaños, para mejorar el SEO de contenido web
 
-## 🔮 Roadmap
-
-- [ ] Implementar análisis de SEO con IA
-- [ ] Agregar generador de títulos alternativos
-- [ ] Sistema de métricas y reportes
-- [ ] Integración con APIs de análisis de texto
-- [ ] Dashboard con estadísticas históricas
-- [ ] Exportación de reportes en PDF
-- [ ] Sistema de planes y suscripciones
-
-## 📞 Soporte
-
-Para reportar bugs o solicitar features, por favor abre un issue en el repositorio.
-**Los comentarios, el formateado de los archivos y el README.md han sido generados por ABACUS AI**
+**Los comentarios, el formateado de los archivos y el README.md han sido generados por Claude Code, Abacus AI CLI es caca podrida**
