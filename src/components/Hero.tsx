@@ -78,7 +78,7 @@ export default function Hero() {
       <section className="w-screen flex justify-center">
         <div className="w-screen flex justify-center">
           <form onSubmit={sendInputToApi} className="w-screen flex justify-center">
-            <div className="text-center items-center  text-white flex flex-col mt-4">
+            <div className="text-center items-center  text-white flex flex-col mt-4 w-full">
               <label htmlFor="message">Escribe tu dirección URL para comprobarla:</label>
               <input type="url" name="message" id="message" className="border-2 border-black rounded-xl bg-gray-300 px-2 py-2 outline-none text-black w-3/4 md:max-w-[33.333vw]" placeholder="https://tu-web-increible.com" required/>
               <div className="items-center text-[10px] justify-between flex flex-col gap-2 mt-2">
@@ -90,7 +90,7 @@ export default function Hero() {
                   <option value="coherency-evaluator">Comprobar la coherencia</option>
                 </select>
               </div>
-              <button type="submit" disabled={loading} className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-2/4 md:w-3/4">
+              <button type="submit" disabled={loading} className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-1/4 md:w-1/6">
                 {loading ? 'Analizando...' : 'Analizar'}
               </button>
             </div>
@@ -141,7 +141,7 @@ export default function Hero() {
             <div className="flex justify-between items-start mb-4">
               <h3 className="font-semibold text-xl">Resultados del Análisis</h3>
               <span className="text-xs bg-blue-600 px-3 py-1 rounded-full">
-                {result.role || 'basic'}
+                {'basic'}
               </span>
             </div>
 
