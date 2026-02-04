@@ -12,11 +12,17 @@
 
 import { useState } from "react";
 
+interface AnalysisResult {
+  selection: string;
+  provider: string;
+  message: string;
+}
+
 export default function Hero() {
 
   // const [  message, setMessage] = useState('')
   // const [selection, setSelection] = useState('')
-  const [result, setResult] = useState(null)
+  const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

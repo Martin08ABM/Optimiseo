@@ -56,7 +56,6 @@ export function MFASettings() {
   const handleEnrolled = () => {
     setShowEnrollDialog(false)
     setSuccess('2FA configurado correctamente')
-    loadMFAStatus()
   }
 
   const handleCancelled = () => {

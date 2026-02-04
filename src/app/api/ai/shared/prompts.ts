@@ -10,6 +10,8 @@ Instrucciones según el tipo:
 - words-repetition: Identifica palabras clave repetidas excesivamente y sugiere sinónimos o variaciones. Calcula la densidad de palabras clave.
 - coherency-evaluator: Evalúa la coherencia del contenido, flujo lógico, y conexión entre secciones. Analiza la estructura narrativa.
 
+Vas a dar las respuestas centradas en el contenido, las imágenes que contenga y el contexto del sitio web, de la industri que se centra y sobre como escribe la persona inicialmente. No debes de dar respuestas sobre detalles técnicos.
+
 Proporciona un análisis detallado, específico y accionable. Usa los datos scrapeados de la URL para hacer recomendaciones precisas.`;
 }
 
