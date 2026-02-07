@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface AnalysisResult {
   selection: string;
@@ -18,13 +18,30 @@ interface AnalysisResult {
   message: string;
 }
 
-export default function Hero() {
+interface UsageStats {
+  used: number;
+  limit: number;
+  remaining: number;
+}
+
+interface HeroProps {
+  isAuthenticated: boolean;
+  usage?: UsageStats;
+}
+
+export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps) {
 
   // const [  message, setMessage] = useState('')
   // const [selection, setSelection] = useState('')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [usage, setUsage] = useState<UsageStats | undefined>(initialUsage)
+
+  // Actualizar el estado cuando cambien las props
+  useEffect(() => {
+    setUsage(initialUsage);
+  }, [initialUsage]);
 
   const sendInputToApi = async function(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -67,9 +84,30 @@ export default function Hero() {
       }
 
       setResult(data);
+
+      // Actualizar el contador de uso si viene en la respuesta
+      if (data.usage) {
+        setUsage(data.usage);
+      }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
       setError(errorMessage);
+
+      // Si es un error 429, actualizar el uso
+      if (err instanceof Error && err.message.includes('limit')) {
+        // Recargar los datos de uso desde el servidor
+        try {
+          const usageResponse = await fetch('/api/subscription/status');
+          if (usageResponse.ok) {
+            const data = await usageResponse.json();
+            if (data.usage) {
+              setUsage(data.usage);
+            }
+          }
+        } catch {
+          // Ignorar errores al actualizar el uso
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -86,6 +124,36 @@ export default function Hero() {
           <form onSubmit={sendInputToApi} className="w-screen flex justify-center">
             <div className="text-center items-center  text-white flex flex-col mt-4 w-full">
               <label htmlFor="message">Escribe tu dirección URL para comprobarla:</label>
+
+              {/* Contador de análisis disponibles */}
+              {isAuthenticated && usage && (
+                <div className="mt-2 mb-3">
+                  <div className="flex items-center justify-center gap-2 text-sm">
+                    <span className={`font-semibold ${
+                      usage.remaining === 0
+                        ? 'text-red-400'
+                        : usage.remaining < 3
+                        ? 'text-yellow-400'
+                        : 'text-green-400'
+                    }`}>
+                      {usage.remaining} de {usage.limit} análisis disponibles hoy
+                    </span>
+                  </div>
+                  <div className="w-full max-w-xs mx-auto mt-1 bg-gray-700 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all ${
+                        usage.remaining === 0
+                          ? 'bg-red-500'
+                          : usage.remaining < 3
+                          ? 'bg-yellow-500'
+                          : 'bg-green-500'
+                      }`}
+                      style={{ width: `${(usage.remaining / usage.limit) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
               <input type="url" name="message" id="message" className="border-2 border-black rounded-xl bg-gray-300 px-2 py-2 outline-none text-black w-3/4 md:max-w-[33.333vw]" placeholder="https://tu-web-increible.com" required/>
               <div className="items-center text-[10px] justify-between flex flex-col gap-2 mt-2">
                 <p>Elije que hay que revisar:</p>
@@ -96,9 +164,24 @@ export default function Hero() {
                   <option value="coherency-evaluator">Comprobar la coherencia</option>
                 </select>
               </div>
-              <button type="submit" disabled={loading} className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-1/4 md:w-1/6">
-                {loading ? 'Analizando...' : 'Analizar'}
+              <button
+                type="submit"
+                disabled={loading || (isAuthenticated && usage?.remaining === 0)}
+                className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-1/4 md:w-1/6"
+              >
+                {loading
+                  ? 'Analizando...'
+                  : (isAuthenticated && usage?.remaining === 0)
+                    ? 'Límite alcanzado'
+                    : 'Analizar'}
               </button>
+
+              {/* Mensaje cuando se alcanza el límite */}
+              {isAuthenticated && usage?.remaining === 0 && (
+                <p className="text-yellow-400 text-sm mt-2">
+                  Has alcanzado tu límite diario de análisis. Mejora a Pro para obtener más análisis diarios.
+                </p>
+              )}
             </div>
           </form>
         </div>

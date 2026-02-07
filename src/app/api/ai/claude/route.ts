@@ -3,6 +3,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { scrapeURL } from "../shared/webSearch";
 import { buildPromptWithScrapedData } from "../shared/prompts";
 import type { ScrapedContent } from "../shared/types";
+import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { canPerformAnalysis, trackAnalysis } from "@/src/lib/subscription/utils";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -17,6 +19,31 @@ function extractURL(text: string): string | null {
 
 export async function POST(request: NextRequest) {
   try {
+    // Verificar autenticación
+    const supabase = await createServerSupabaseClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized - Please login to continue" },
+        { status: 401 }
+      );
+    }
+
+    // Verificar límites de análisis
+    const canAnalyze = await canPerformAnalysis(user.id);
+
+    if (!canAnalyze.allowed) {
+      return NextResponse.json(
+        {
+          error: canAnalyze.reason,
+          usage: canAnalyze.usage,
+          limitReached: true
+        },
+        { status: 429 }
+      );
+    }
+
     const { prompt, context } = await request.json();
     
     if (!prompt) {
@@ -77,12 +104,27 @@ export async function POST(request: NextRequest) {
       ? message.content[0].text
       : "No response generated";
 
+    // Trackear el análisis en la base de datos
+    const analysisType = context?.selection || 'readability-analyzer';
+    await trackAnalysis(
+      user.id,
+      extractedURL || 'manual-input',
+      analysisType,
+      { response: responseText },
+      scrapedData
+    );
+
+    // Obtener el uso actualizado después de registrar el análisis
+    const { getDailyUsage } = await import('@/src/lib/subscription/utils');
+    const updatedUsage = await getDailyUsage(user.id);
+
     return NextResponse.json({
       message: responseText,
       model: "claude-sonnet-4-5",
       provider: "claude",
       selection: context?.selection,
       scrapedData,
+      usage: updatedUsage,
     });
 
   } catch (error: unknown) {
