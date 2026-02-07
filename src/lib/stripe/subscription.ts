@@ -115,6 +115,11 @@ export async function handleCheckoutSuccess(
   // Get subscription details from Stripe
   const stripeSubscription = await stripe.subscriptions.retrieve(subscription);
 
+  // Get period dates from first subscription item
+  const firstItem = stripeSubscription.items.data[0];
+  const currentPeriodStart = firstItem?.current_period_start;
+  const currentPeriodEnd = firstItem?.current_period_end;
+
   // Update subscription in database
   await supabase
     .from('subscriptions')
@@ -123,12 +128,12 @@ export async function handleCheckoutSuccess(
       stripe_customer_id: customerId,
       stripe_subscription_id: subscription,
       status: 'active',
-      current_period_start: new Date(
-        stripeSubscription.current_period_start * 1000
-      ).toISOString(),
-      current_period_end: new Date(
-        stripeSubscription.current_period_end * 1000
-      ).toISOString(),
+      current_period_start: currentPeriodStart
+        ? new Date(currentPeriodStart * 1000).toISOString()
+        : null,
+      current_period_end: currentPeriodEnd
+        ? new Date(currentPeriodEnd * 1000).toISOString()
+        : null,
     })
     .eq('user_id', userId);
 
@@ -172,16 +177,21 @@ export async function handleSubscriptionUpdate(
   const status = subscription.status;
   const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
+  // Get period dates from first subscription item
+  const firstItem = subscription.items.data[0];
+  const currentPeriodStart = firstItem?.current_period_start;
+  const currentPeriodEnd = firstItem?.current_period_end;
+
   await supabase
     .from('subscriptions')
     .update({
       status: status as any,
-      current_period_start: new Date(
-        subscription.current_period_start * 1000
-      ).toISOString(),
-      current_period_end: new Date(
-        subscription.current_period_end * 1000
-      ).toISOString(),
+      current_period_start: currentPeriodStart
+        ? new Date(currentPeriodStart * 1000).toISOString()
+        : null,
+      current_period_end: currentPeriodEnd
+        ? new Date(currentPeriodEnd * 1000).toISOString()
+        : null,
       cancel_at_period_end: cancelAtPeriodEnd,
     })
     .eq('user_id', userId);

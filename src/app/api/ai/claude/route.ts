@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       extractedURL || 'manual-input',
       analysisType,
       { response: responseText },
-      scrapedData
+      scrapedData as unknown as Record<string, unknown>
     );
 
     // Obtener el uso actualizado después de registrar el análisis
