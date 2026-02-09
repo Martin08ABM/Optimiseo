@@ -65,6 +65,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${atkinsonHyperlegible.variable} ${googleSansCode.variable} antialiased`}>
+    <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
       <body cz-shortcut-listen="true">
         {children}
       </body>
