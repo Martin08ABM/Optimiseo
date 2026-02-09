@@ -1,0 +1,36 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🚀 Deploy via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          echo "📥 Pulling latest changes..."
+          cd ~/projects/Optimiseo
+          git pull origin main
+          
+          echo "📦 Installing dependencies..."
+          export PATH=$HOME/.local/share/pnpm:$PATH
+          pnpm install
+          
+          echo "🏗️ Building application..."
+          pnpm build
+          
+          echo "♻️ Restarting PM2..."
+          pm2 restart optimiseo
+          
+          echo "✅ Deploy completed!"
+          pm2 list
