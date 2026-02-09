@@ -18,12 +18,19 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         port: ${{ secrets.VPS_PORT }}
         script: |
+          # Cargar NVM (Node Version Manager)
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          
+          # Cargar pnpm en el PATH
+          export PNPM_HOME="$HOME/.local/share/pnpm"
+          export PATH="$PNPM_HOME:$PATH"
+          
           echo "📥 Pulling latest changes..."
           cd ~/projects/Optimiseo
           git pull origin main
           
           echo "📦 Installing dependencies..."
-          export PATH=$HOME/.local/share/pnpm:$PATH
           pnpm install
           
           echo "🏗️ Building application..."
