@@ -16,7 +16,7 @@ export default async function StatsSection() {
   if (totalAnalyses === 0) return null;
 
   return (
-    <section className="py-12 px-6">
+    <section className="py-12 px-6 mb-8">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-4xl font-bold text-white">{totalAnalyses.toLocaleString('es-ES')}</p>
         <p className="text-gray-400 mt-2">análisis realizados con OptimiSEO</p>
