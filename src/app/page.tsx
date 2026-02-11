@@ -12,13 +12,15 @@
 import Hero from "@/src/components/Hero";
 import Header from "@/src/components/Header";
 import RevisionTitleConcordancy from "../components/RevisionTitleConcordancy";
+import KeywordDensityShowcase from "@/src/components/landing/KeywordDensityShowcase";
+import MetaDescriptionShowcase from "@/src/components/landing/MetaDescriptionShowcase";
+import ImageAltShowcase from "@/src/components/landing/ImageAltShowcase";
 import HowItWorks from "@/src/components/landing/HowItWorks";
 import ExampleShowcase from "@/src/components/landing/ExampleShowcase";
 import PricingSummary from "@/src/components/landing/PricingSummary";
 import StatsSection from "@/src/components/landing/StatsSection";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import { getDailyUsage } from "@/src/lib/subscription/utils";
-import Link from "next/link";
 import Footer from "../components/Footer";
 
 export default async function Home() {
@@ -43,15 +45,24 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950 max-w-full">
       <Header />
       <Hero isAuthenticated={!!user} usage={usage} isPro={isPro} />
-      <section className="flex flex-col gap-4 items-center justify-center px-10 py-4">
-        <div className="flex flex-col max-w-[60%]">
-          <Link href="/"><RevisionTitleConcordancy /></Link>
+
+      {/* Showcase de funcionalidades */}
+      <section className="flex flex-col gap-6 items-center justify-center px-6 md:px-10 py-8">
+        <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
+          ¿Qué puedes hacer con OptimiSEO?
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl w-full">
+          <RevisionTitleConcordancy />
+          <KeywordDensityShowcase />
+          <MetaDescriptionShowcase />
+          <ImageAltShowcase />
         </div>
       </section>
+
       <HowItWorks />
       <ExampleShowcase />
       <StatsSection />
-      <PricingSummary />
+      {!user && <PricingSummary />}
       <Footer />
     </div>
   );

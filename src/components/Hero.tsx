@@ -128,16 +128,21 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
   }
 
   return (
-    <section className="flex flex-col gap-4 mt-4 items-center max-w-full">
-      <h1 className="font-title text-white text-md md:text-lg max-w-2xl md:max-w-3xl font-black text-center">
-        Tu ayudante para impulsar tus páginas optimizando el SEO sin parecer un
-        robot
-      </h1>
-      <section className="max-w-full flex justify-center">
-        <div className="max-w-full flex justify-center">
-          <form onSubmit={sendInputToApi} className="max-w-full flex justify-center">
-            <div className="text-center items-center  text-white flex flex-col mt-4 w-full">
-              <label htmlFor="message">Escribe tu dirección URL para comprobarla:</label>
+    <section className="flex flex-col gap-6 mt-8 items-center max-w-full">
+      <div className="text-center max-w-3xl px-4">
+        <h1 className="font-title text-white text-xl md:text-2xl font-black mb-3">
+          Tu ayudante para impulsar tus páginas optimizando el SEO sin parecer un robot
+        </h1>
+        <p className="text-gray-400 text-sm md:text-base">
+          Análisis inteligente con IA que detecta problemas y te da soluciones concretas
+        </p>
+      </div>
+
+      <section className="max-w-full flex justify-center w-full">
+        <div className="max-w-full flex justify-center w-full">
+          <form onSubmit={sendInputToApi} className="max-w-full flex justify-center w-full">
+            <div className="text-center items-center text-white flex flex-col w-full max-w-2xl px-4">
+              <label htmlFor="message" className="text-lg font-medium mb-3">Analiza tu sitio web ahora</label>
 
               {/* Contador de análisis disponibles */}
               {isAuthenticated && usage && (
@@ -168,21 +173,37 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
                 </div>
               )}
 
-              <input type="url" name="message" id="message" className="border-2 border-black rounded-xl bg-gray-300 px-2 py-2 outline-none text-black w-3/4 md:max-w-[33.333vw]" placeholder="https://tu-web-increible.com" required/>
-              <div className="items-center text-[10px] justify-between flex flex-col gap-2 mt-2">
-                <p>Elije que hay que revisar:</p>
-                <select name="selection" id="selection" className="text-white max-w-1/2 border-2 border-black outline-none rounded-xl px-1 py-1 bg-gray-500" required>
-                  <option value="">-- Selecciona una opción --</option>
-                  <option value="readability-analyzer">Comprobador de legibilidad</option>
-                  <option value="words-repetition">Comprobar la repetición de palabras</option>
-                  <option value="coherency-evaluator">Comprobar la coherencia</option>
-                  <option value="keyword-suggestions">Sugerencias de Keywords</option>
-                </select>
+              <div className="w-full space-y-4">
+                <input
+                  type="url"
+                  name="message"
+                  id="message"
+                  className="w-full border-2 border-gray-600 rounded-xl bg-gray-800 px-4 py-3 outline-none text-white placeholder-gray-500 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 transition-all"
+                  placeholder="https://tu-sitio-web.com"
+                  required
+                />
+
+                <div className="w-full">
+                  <label htmlFor="selection" className="block text-sm text-gray-400 mb-2">Tipo de análisis:</label>
+                  <select
+                    name="selection"
+                    id="selection"
+                    className="w-full border-2 border-gray-600 outline-none rounded-xl px-4 py-3 bg-gray-800 text-white focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 transition-all"
+                    required
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="readability-analyzer">Comprobador de legibilidad</option>
+                    <option value="words-repetition">Repetición de palabras</option>
+                    <option value="coherency-evaluator">Coherencia del contenido</option>
+                    <option value="keyword-suggestions">Sugerencias de Keywords</option>
+                  </select>
+                </div>
               </div>
+
               <button
                 type="submit"
                 disabled={loading || (isAuthenticated && usage?.remaining === 0)}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-2/4 md:w-3/6"
+                className="mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-blue-500/50 w-full md:w-auto min-w-50"
               >
                 {loading
                   ? 'Analizando...'
@@ -203,29 +224,38 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
       </section>
 
       {loading && (
-        <div className="mt-6 max-w-3xl w-full px-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 text-white">
-            <div className="flex justify-between items-start mb-4">
-              <div className="h-7 bg-gray-700 rounded w-48 animate-pulse"></div>
-              <div className="h-6 bg-blue-600/50 rounded-full w-16 animate-pulse"></div>
+        <div className="mt-8 max-w-3xl w-full px-4">
+          <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl p-6 md:p-8 text-white shadow-2xl">
+            <div className="flex justify-between items-start mb-6">
+              <div className="space-y-2">
+                <div className="h-8 bg-gray-700 rounded-lg w-56 animate-pulse"></div>
+                <div className="h-4 bg-gray-700/60 rounded w-40 animate-pulse"></div>
+              </div>
+              <div className="h-7 bg-blue-600/40 rounded-full w-12 animate-pulse"></div>
             </div>
 
-            <div className="mb-4 space-y-2">
-              <div className="h-4 bg-gray-700 rounded w-64 animate-pulse"></div>
-              <div className="h-4 bg-gray-700 rounded w-48 animate-pulse"></div>
+            <div className="mb-6 space-y-2">
+              <div className="h-4 bg-gray-700/80 rounded w-3/4 animate-pulse"></div>
+              <div className="h-4 bg-gray-700/60 rounded w-2/3 animate-pulse"></div>
             </div>
 
-            <div className="bg-gray-900 rounded-lg p-4 space-y-3">
-              <div className="h-4 bg-gray-700 rounded w-full animate-pulse"></div>
-              <div className="h-4 bg-gray-700 rounded w-5/6 animate-pulse"></div>
-              <div className="h-4 bg-gray-700 rounded w-4/5 animate-pulse"></div>
-              <div className="h-4 bg-gray-700 rounded w-full animate-pulse"></div>
-              <div className="h-4 bg-gray-700 rounded w-3/4 animate-pulse"></div>
+            <div className="bg-gray-900 rounded-xl p-5 space-y-4">
+              <div className="h-4 bg-gray-700/70 rounded w-full animate-pulse"></div>
+              <div className="h-4 bg-gray-700/60 rounded w-11/12 animate-pulse"></div>
+              <div className="h-4 bg-gray-700/50 rounded w-5/6 animate-pulse"></div>
+              <div className="h-4 bg-gray-700/70 rounded w-full animate-pulse"></div>
+              <div className="h-4 bg-gray-700/60 rounded w-4/5 animate-pulse"></div>
             </div>
 
-            <p className="text-center text-gray-400 mt-4 text-sm">
-              Claude está analizando tu sitio web...
-            </p>
+            <div className="text-center mt-6">
+              <div className="inline-flex items-center gap-2 text-blue-400">
+                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="font-medium">Claude está analizando tu sitio web...</span>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -240,12 +270,15 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
       )}
 
       {result && !loading && (
-        <div className="mt-6 max-w-3xl w-full px-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 text-white">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="font-semibold text-xl">Resultados del Análisis</h3>
-              <span className="text-xs bg-blue-600 px-3 py-1 rounded-full">
-                {'basic'}
+        <div className="mt-8 max-w-3xl w-full px-4">
+          <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl p-6 md:p-8 text-white shadow-2xl">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="font-bold text-2xl mb-1">Resultados del Análisis</h3>
+                <p className="text-sm text-gray-400">Análisis completado con éxito</p>
+              </div>
+              <span className="text-xs bg-blue-600/80 px-3 py-1.5 rounded-full font-medium">
+                IA
               </span>
             </div>
 
@@ -282,28 +315,29 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
               </ReactMarkdown>
             </div>
 
-            <button
-              onClick={async () => {
-                if (!result.analysisId) return;
-                try {
-                  const res = await fetch('/api/analyses/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      analysisId: result.analysisId,
-                      message: result.message,
-                      scrapedData: result.scrapedData,
-                      scores: result.scores,
-                    }),
-                  });
-                  if (res.ok) setSaved(true);
-                } catch {
-                  // silent fail
-                }
-              }}
-              disabled={saved || !result.analysisId}
-              className="mt-4 flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-default text-white font-semibold px-5 py-2 rounded-xl transition-colors text-sm"
-            >
+            <div className="flex flex-wrap gap-3 mt-6">
+              <button
+                onClick={async () => {
+                  if (!result.analysisId) return;
+                  try {
+                    const res = await fetch('/api/analyses/save', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        analysisId: result.analysisId,
+                        message: result.message,
+                        scrapedData: result.scrapedData,
+                        scores: result.scores,
+                      }),
+                    });
+                    if (res.ok) setSaved(true);
+                  } catch {
+                    // silent fail
+                  }
+                }}
+                disabled={saved || !result.analysisId}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg disabled:hover:scale-100"
+              >
               {saved ? (
                 <>
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -336,7 +370,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
                   }
                 }}
                 disabled={monitored}
-                className="mt-2 flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-default text-white font-semibold px-5 py-2 rounded-xl transition-colors text-sm"
+                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg disabled:hover:scale-100"
               >
                 {monitored ? (
                   <>
@@ -356,6 +390,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
                 )}
               </button>
             )}
+            </div>
 
             <ExportButtons
               analysisResult={result.message}
