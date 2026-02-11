@@ -40,7 +40,7 @@ export default function PricingClient({
         href="/auth/register"
         className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-colors ${
           isHighlighted
-            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
+            ? 'bg-linear-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
             : 'bg-gray-600 text-white hover:bg-gray-700'
         }`}
       >

@@ -57,7 +57,7 @@ export default function ResetPassword() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="px-4 py-2 rounded border border-gray-300"
+              className="px-4 py-2 rounded-xl border-2 border-gray-300"
               required
             />
           </div>
@@ -69,7 +69,7 @@ export default function ResetPassword() {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="px-4 py-2 rounded border border-gray-300"
+              className="px-4 py-2 rounded-xl border-2 border-gray-300"
               required
             />
           </div>

@@ -12,8 +12,14 @@
 import Hero from "@/src/components/Hero";
 import Header from "@/src/components/Header";
 import RevisionTitleConcordancy from "../components/RevisionTitleConcordancy";
+import HowItWorks from "@/src/components/landing/HowItWorks";
+import ExampleShowcase from "@/src/components/landing/ExampleShowcase";
+import PricingSummary from "@/src/components/landing/PricingSummary";
+import StatsSection from "@/src/components/landing/StatsSection";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import { getDailyUsage } from "@/src/lib/subscription/utils";
+import Link from "next/link";
+import Footer from "../components/Footer";
 
 export default async function Home() {
   // Obtener información del usuario autenticado
@@ -27,12 +33,19 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950 min-w-full">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950 max-w-full">
       <Header />
       <Hero isAuthenticated={!!user} usage={usage} />
-      <div>
-        <RevisionTitleConcordancy />
-      </div>
+      <section className="flex flex-col gap-4 items-center justify-center px-10 py-4">
+        <div className="flex flex-col max-w-[60%]">
+          <Link href="/"><RevisionTitleConcordancy /></Link>
+        </div>
+      </section>
+      <HowItWorks />
+      <ExampleShowcase />
+      <StatsSection />
+      <PricingSummary />
+      <Footer />
     </div>
   );
 }

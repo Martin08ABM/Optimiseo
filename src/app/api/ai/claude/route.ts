@@ -104,14 +104,12 @@ export async function POST(request: NextRequest) {
       ? message.content[0].text
       : "No response generated";
 
-    // Trackear el análisis en la base de datos
+    // Trackear el análisis en la base de datos (solo para contar uso)
     const analysisType = context?.selection || 'readability-analyzer';
-    await trackAnalysis(
+    const trackResult = await trackAnalysis(
       user.id,
       extractedURL || 'manual-input',
       analysisType,
-      { response: responseText },
-      scrapedData as unknown as Record<string, unknown>
     );
 
     // Obtener el uso actualizado después de registrar el análisis
@@ -125,6 +123,7 @@ export async function POST(request: NextRequest) {
       selection: context?.selection,
       scrapedData,
       usage: updatedUsage,
+      analysisId: trackResult.analysisId || null,
     });
 
   } catch (error: unknown) {

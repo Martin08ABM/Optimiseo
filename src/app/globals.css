@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme inline {
   --font-title: var(--atkinson-hyperlegible);
@@ -7,4 +8,11 @@
 
 body {
   background-color: #000;
+}
+
+@media print {
+  header, nav, button, .no-print { display: none !important; }
+  body { background: white !important; color: black !important; }
+  .prose { color: black !important; }
+  .prose * { color: black !important; }
 }

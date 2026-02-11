@@ -33,7 +33,11 @@ export default function MobileMenu({ isAuthenticated }: MobileMenuProps) {
             <Link href="/pricing" onClick={() => setIsOpen(false)}>Precios</Link>
             <hr className="border-black" />
             {isAuthenticated ? (
-              <Link href="/dashboard" onClick={() => setIsOpen(false)}>Mi cuenta</Link>
+              <>
+                <Link href="/dashboard" onClick={() => setIsOpen(false)}>Mi cuenta</Link>
+                <Link href="/dashboard/history" onClick={() => setIsOpen(false)}>Historial</Link>
+                <Link href="/dashboard/history/compare" onClick={() => setIsOpen(false)}>Comparar</Link>
+              </>
             ) : (
               <>
                 <Link href="/auth/register" onClick={() => setIsOpen(false)}>Regístrate</Link>

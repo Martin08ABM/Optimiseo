@@ -1,5 +1,6 @@
 import { stripe, STRIPE_CONFIG } from './config';
 import { createServerSupabaseClient } from '@/src/lib/supabase/server';
+import { supabaseAdmin } from '@/src/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type Stripe from 'stripe';
 
@@ -102,8 +103,8 @@ export async function createBillingPortalSession(
 export async function handleCheckoutSuccess(
   session: Stripe.Checkout.Session
 ): Promise<void> {
-  const supabase = await createServerSupabaseClient();
   const userId = session.metadata?.user_id;
+  console.log('[Webhook] handleCheckoutSuccess - userId:', userId);
 
   if (!userId) {
     throw new Error('No user_id in session metadata');
@@ -120,44 +121,79 @@ export async function handleCheckoutSuccess(
   const currentPeriodStart = firstItem?.current_period_start;
   const currentPeriodEnd = firstItem?.current_period_end;
 
-  // Update subscription in database
-  await supabase
+  const subscriptionData = {
+    user_id: userId,
+    plan_id: 'pro',
+    stripe_customer_id: customerId,
+    stripe_subscription_id: subscription,
+    status: 'active',
+    current_period_start: currentPeriodStart
+      ? new Date(currentPeriodStart * 1000).toISOString()
+      : null,
+    current_period_end: currentPeriodEnd
+      ? new Date(currentPeriodEnd * 1000).toISOString()
+      : null,
+  };
+
+  // Try update first
+  const { data: updated, error: updateError } = await supabaseAdmin
     .from('subscriptions')
-    .update({
-      plan_id: 'pro',
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscription,
-      status: 'active',
-      current_period_start: currentPeriodStart
-        ? new Date(currentPeriodStart * 1000).toISOString()
-        : null,
-      current_period_end: currentPeriodEnd
-        ? new Date(currentPeriodEnd * 1000).toISOString()
-        : null,
-    })
-    .eq('user_id', userId);
+    .update(subscriptionData)
+    .eq('user_id', userId)
+    .select();
+
+  if (updateError) {
+    console.error('[Webhook] Error updating subscription:', updateError);
+    throw new Error(`Failed to update subscription: ${updateError.message}`);
+  }
+
+  // If update matched 0 rows, the subscription row doesn't exist yet - insert it
+  if (!updated || updated.length === 0) {
+    console.log('[Webhook] No existing subscription row found, inserting new one for user:', userId);
+    const { error: insertError } = await supabaseAdmin
+      .from('subscriptions')
+      .insert(subscriptionData);
+
+    if (insertError) {
+      console.error('[Webhook] Error inserting subscription:', insertError);
+      throw new Error(`Failed to insert subscription: ${insertError.message}`);
+    }
+  }
+
+  console.log('[Webhook] Subscription updated/created successfully for user:', userId);
 
   // Record payment
   const paymentIntent = session.payment_intent as string;
   const amount = session.amount_total || 0;
 
-  await supabase.from('payments').insert({
-    subscription_id: (
-      await supabase
-        .from('subscriptions')
-        .select('id')
-        .eq('user_id', userId)
-        .single()
-    ).data?.id,
-    stripe_payment_intent_id: paymentIntent,
-    amount: amount / 100,
-    currency: STRIPE_CONFIG.currency,
-    status: 'succeeded',
-  });
+  const { data: subData } = await supabaseAdmin
+    .from('subscriptions')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
 
-  // Revalidar el dashboard y la página de pricing para reflejar los cambios
+  if (subData?.id) {
+    const { error: paymentError } = await supabaseAdmin
+      .from('payments')
+      .insert({
+        subscription_id: subData.id,
+        stripe_payment_intent_id: paymentIntent,
+        amount: amount / 100,
+        currency: STRIPE_CONFIG.currency,
+        status: 'succeeded',
+      });
+
+    if (paymentError) {
+      console.error('[Webhook] Error recording payment:', paymentError);
+    }
+  } else {
+    console.error('[Webhook] Could not find subscription id to record payment');
+  }
+
+  // Revalidar el dashboard, pricing y homepage para reflejar los cambios
   revalidatePath('/dashboard');
   revalidatePath('/pricing');
+  revalidatePath('/');
 }
 
 /**
@@ -166,7 +202,6 @@ export async function handleCheckoutSuccess(
 export async function handleSubscriptionUpdate(
   subscription: Stripe.Subscription
 ): Promise<void> {
-  const supabase = await createServerSupabaseClient();
   const userId = subscription.metadata.user_id;
 
   if (!userId) {
@@ -182,7 +217,7 @@ export async function handleSubscriptionUpdate(
   const currentPeriodStart = firstItem?.current_period_start;
   const currentPeriodEnd = firstItem?.current_period_end;
 
-  await supabase
+  const { error } = await supabaseAdmin
     .from('subscriptions')
     .update({
       status: status as any,
@@ -196,9 +231,14 @@ export async function handleSubscriptionUpdate(
     })
     .eq('user_id', userId);
 
-  // Revalidar el dashboard para reflejar los cambios
+  if (error) {
+    console.error('Error updating subscription:', error);
+  }
+
+  // Revalidar el dashboard, pricing y homepage para reflejar los cambios
   revalidatePath('/dashboard');
   revalidatePath('/pricing');
+  revalidatePath('/');
 }
 
 /**
@@ -207,7 +247,6 @@ export async function handleSubscriptionUpdate(
 export async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription
 ): Promise<void> {
-  const supabase = await createServerSupabaseClient();
   const userId = subscription.metadata.user_id;
 
   if (!userId) {
@@ -216,7 +255,7 @@ export async function handleSubscriptionDeleted(
   }
 
   // Downgrade to free plan
-  await supabase
+  const { error } = await supabaseAdmin
     .from('subscriptions')
     .update({
       plan_id: 'free',
@@ -228,9 +267,14 @@ export async function handleSubscriptionDeleted(
     })
     .eq('user_id', userId);
 
-  // Revalidar el dashboard para reflejar los cambios
+  if (error) {
+    console.error('Error downgrading subscription:', error);
+  }
+
+  // Revalidar el dashboard, pricing y homepage para reflejar los cambios
   revalidatePath('/dashboard');
   revalidatePath('/pricing');
+  revalidatePath('/');
 }
 
 /**

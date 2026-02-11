@@ -4,7 +4,7 @@
  * Este componente muestra la barra de navegación superior de la aplicación.
  * Incluye:
  * - Logo de la aplicación
- * - Enlaces de navegación (Casos de uso, Precios) - ocultos en mobile
+ * - Enlaces de navegación (Precios) - ocultos en mobile
  * - Autenticación condicional:
  *   - Si el usuario está autenticado: muestra su avatar o inicial
  *   - Si no está autenticado: muestra botones de registro e inicio de sesión
@@ -43,8 +43,9 @@ export default async function Header() {
       {/* Navegación principal - oculta en mobile */}
       <nav className="hidden md:flex flex-row ml-6 text-black text-lg font-sans">
         <ul className="flex flex-row gap-8">
-          <li><Link href="/usecase">Casos de uso</Link></li>
           <li><Link href="/pricing">Precios</Link></li>
+          {user && <li><Link href="/dashboard/history">Historial</Link></li>}
+          {user && <li><Link href="/dashboard/history/compare">Comparar</Link></li>}
         </ul>
       </nav>
 

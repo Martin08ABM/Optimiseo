@@ -125,9 +125,7 @@ export async function trackAnalysis(
   userId: string,
   url: string,
   analysisType: string,
-  result: Record<string, unknown>,
-  scrapedData?: Record<string, unknown>
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; analysisId?: string }> {
   const supabase = await createServerSupabaseClient();
 
   // Get user's current plan
@@ -141,22 +139,22 @@ export async function trackAnalysis(
     return { success: false, error: 'No subscription found' };
   }
 
-  // Insert analysis record
-  const { error } = await supabase.from('analyses').insert({
+  // Insert analysis record (without result - the user saves explicitly)
+  const { data, error } = await supabase.from('analyses').insert({
     user_id: userId,
     url,
     analysis_type: analysisType,
-    result,
-    scraped_data: scrapedData || null,
+    result: null,
+    scraped_data: null,
     plan_used: subscription.plan_id,
-  });
+  }).select('id').single();
 
   if (error) {
     console.error('Error tracking analysis:', error);
     return { success: false, error: error.message };
   }
 
-  return { success: true };
+  return { success: true, analysisId: data?.id };
 }
 
 /**
@@ -187,6 +185,7 @@ export async function getAnalysisHistory(
     .from('analyses')
     .select('*')
     .eq('user_id', userId)
+    .not('result', 'is', null)
     .gte('created_at', thirtyDaysAgo.toISOString())
     .order('created_at', { ascending: false })
     .limit(limit);

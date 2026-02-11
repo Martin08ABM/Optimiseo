@@ -11,11 +11,16 @@
 'use client'
 
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import ExportButtons from "./dashboard/ExportButtons";
 
 interface AnalysisResult {
   selection: string;
   provider: string;
   message: string;
+  analysisId: string | null;
+  scrapedData: Record<string, unknown> | null;
 }
 
 interface UsageStats {
@@ -31,12 +36,11 @@ interface HeroProps {
 
 export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps) {
 
-  // const [  message, setMessage] = useState('')
-  // const [selection, setSelection] = useState('')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [usage, setUsage] = useState<UsageStats | undefined>(initialUsage)
+  const [saved, setSaved] = useState(false)
 
   // Actualizar el estado cuando cambien las props
   useEffect(() => {
@@ -48,6 +52,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
     setLoading(true);
     setError(null);
     setResult(null);
+    setSaved(false);
 
     const formData = new FormData(e.currentTarget);
     const message = formData.get('message') as string;
@@ -239,9 +244,69 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
               <p><strong>Proveedor:</strong> {result.provider}</p>
             </div>
 
-            <div className="bg-gray-900 rounded-lg p-4 whitespace-pre-wrap">
-              {result.message}
+            <div className="bg-gray-900 rounded-lg p-4 prose prose-invert prose-sm max-w-none
+              prose-headings:text-white prose-headings:mt-4 prose-headings:mb-2
+              prose-p:text-gray-300 prose-p:leading-relaxed
+              prose-strong:text-white
+              prose-ul:text-gray-300 prose-ol:text-gray-300
+              prose-li:marker:text-blue-400
+              prose-code:text-blue-300 prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+              prose-pre:bg-gray-950 prose-pre:border prose-pre:border-gray-700
+              prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+              prose-table:text-gray-300 prose-th:text-white prose-th:border-gray-600 prose-td:border-gray-700
+              prose-hr:border-gray-700">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {result.message}
+              </ReactMarkdown>
             </div>
+
+            <button
+              onClick={async () => {
+                if (!result.analysisId) return;
+                try {
+                  const res = await fetch('/api/analyses/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      analysisId: result.analysisId,
+                      message: result.message,
+                      scrapedData: result.scrapedData,
+                    }),
+                  });
+                  if (res.ok) setSaved(true);
+                } catch {
+                  // silent fail
+                }
+              }}
+              disabled={saved || !result.analysisId}
+              className="mt-4 flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-default text-white font-semibold px-5 py-2 rounded-xl transition-colors text-sm"
+            >
+              {saved ? (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Guardado
+                </>
+              ) : (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                  </svg>
+                  Guardar resultado
+                </>
+              )}
+            </button>
+
+            <ExportButtons
+              analysisResult={result.message}
+              analysisData={{
+                url: result.scrapedData?.url as string || '',
+                type: result.selection,
+                date: new Date().toISOString(),
+                result: result.message,
+              }}
+            />
           </div>
         </div>
       )}

@@ -46,10 +46,45 @@ export const googleSansCode = localFont({
   variable: "--google-sans-code",
 })
 
-// Metadatos globales de la aplicación
+function getBaseUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_APP_URL || 'https://optimiseo.pro';
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  return `http://${raw}`;
+}
+
+const BASE_URL = getBaseUrl();
+
 export const metadata: Metadata = {
-  title: "Optimiseo",
-  description: "AI-Powered SEO Optimization Tool Maintaining Your Unique Voice",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'OptimiSEO — Optimización SEO con IA',
+    template: '%s | OptimiSEO',
+  },
+  description:
+    'Analiza y optimiza el SEO de tus páginas web con inteligencia artificial. Mejora la legibilidad, detecta repeticiones y evalúa la coherencia de tu contenido.',
+  keywords: ['SEO', 'optimización', 'inteligencia artificial', 'análisis web', 'legibilidad', 'contenido'],
+  authors: [{ name: 'OptimiSEO' }],
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    url: BASE_URL,
+    siteName: 'OptimiSEO',
+    title: 'OptimiSEO — Optimización SEO con IA',
+    description:
+      'Analiza y optimiza el SEO de tus páginas web con inteligencia artificial. Mejora la legibilidad, detecta repeticiones y evalúa la coherencia.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'OptimiSEO' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'OptimiSEO — Optimización SEO con IA',
+    description:
+      'Analiza y optimiza el SEO de tus páginas web con inteligencia artificial.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 /**
@@ -65,8 +100,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${atkinsonHyperlegible.variable} ${googleSansCode.variable} antialiased`}>
-    <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
+    <head>
+        <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
+    </head>
       <body cz-shortcut-listen="true">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebApplication',
+              name: 'OptimiSEO',
+              url: BASE_URL,
+              description:
+                'Analiza y optimiza el SEO de tus páginas web con inteligencia artificial.',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web',
+              offers: {
+                '@type': 'AggregateOffer',
+                lowPrice: '0',
+                highPrice: '12',
+                priceCurrency: 'EUR',
+                offerCount: 2,
+              },
+            }),
+          }}
+        />
         {children}
       </body>
     </html>
