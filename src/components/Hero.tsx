@@ -172,7 +172,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
               <button
                 type="submit"
                 disabled={loading || (isAuthenticated && usage?.remaining === 0)}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-1/4 md:w-1/6"
+                className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-semibold px-6 py-2 rounded-xl transition-colors w-2/4 md:w-3/6"
               >
                 {loading
                   ? 'Analizando...'
