@@ -21,13 +21,18 @@ export async function POST(req: NextRequest) {
     // Get user email
     const email = user.email!;
 
+    // Get optional discount code from body
+    const body = await req.json().catch(() => ({}));
+    const discountCode = body.discountCode || null;
+
     // Create checkout session
     const origin = req.headers.get('origin') || baseUrl;
     const { url } = await createCheckoutSession(
       user.id,
       email,
       `${origin}/dashboard?checkout=success`,
-      `${origin}/dashboard?checkout=canceled`
+      `${origin}/dashboard?checkout=canceled`,
+      discountCode
     );
 
     if (!url) {

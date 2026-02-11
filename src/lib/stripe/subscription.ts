@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/src/lib/supabase/server';
 import { supabaseAdmin } from '@/src/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type Stripe from 'stripe';
+import { validateDiscountCode } from '@/src/lib/admin/discounts';
 
 /**
  * Create a Stripe customer for a user
@@ -30,7 +31,8 @@ export async function createCheckoutSession(
   userId: string,
   email: string,
   successUrl: string,
-  cancelUrl: string
+  cancelUrl: string,
+  discountCode?: string | null
 ): Promise<{ sessionId: string; url: string | null }> {
   const supabase = await createServerSupabaseClient();
 
@@ -53,8 +55,44 @@ export async function createCheckoutSession(
       .eq('user_id', userId);
   }
 
+  // Validar código de descuento si se proporciona
+  let stripeCouponId: string | undefined;
+  let discountCodeId: string | undefined;
+
+  if (discountCode) {
+    // Precio Pro (hardcodeado, debería venir de config)
+    const PRICE = 9.99;
+
+    const validation = await validateDiscountCode(discountCode, userId, PRICE);
+
+    if (validation.valid && validation.discount) {
+      // Crear cupón temporal en Stripe
+      const couponName = `${discountCode}-${userId}-${Date.now()}`;
+
+      if (validation.discount.type === 'percentage') {
+        const coupon = await stripe.coupons.create({
+          percent_off: validation.discount.value,
+          duration: 'once',
+          name: couponName,
+        });
+        stripeCouponId = coupon.id;
+      } else {
+        // Descuento fijo - convertir a centavos
+        const coupon = await stripe.coupons.create({
+          amount_off: Math.round(validation.discount.value * 100),
+          currency: STRIPE_CONFIG.currency,
+          duration: 'once',
+          name: couponName,
+        });
+        stripeCouponId = coupon.id;
+      }
+
+      discountCodeId = validation.discount.id;
+    }
+  }
+
   // Create checkout session
-  const session = await stripe.checkout.sessions.create({
+  const sessionConfig: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
     mode: 'subscription',
     payment_method_types: ['card'],
@@ -68,13 +106,21 @@ export async function createCheckoutSession(
     cancel_url: cancelUrl,
     metadata: {
       user_id: userId,
+      discount_code_id: discountCodeId || '',
     },
     subscription_data: {
       metadata: {
         user_id: userId,
       },
     },
-  });
+  };
+
+  // Aplicar cupón si existe
+  if (stripeCouponId) {
+    sessionConfig.discounts = [{ coupon: stripeCouponId }];
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionConfig);
 
   return {
     sessionId: session.id,
@@ -188,6 +234,30 @@ export async function handleCheckoutSuccess(
     }
   } else {
     console.error('[Webhook] Could not find subscription id to record payment');
+  }
+
+  // Registrar uso de código de descuento si aplica
+  const discountCodeId = session.metadata?.discount_code_id;
+  if (discountCodeId) {
+    const originalAmount = 9.99; // Precio original
+    const discountAmount = originalAmount - (amount / 100);
+
+    if (discountAmount > 0) {
+      const { error: discountError } = await supabaseAdmin
+        .from('discount_code_usage')
+        .insert({
+          code_id: discountCodeId,
+          user_id: userId,
+          discount_amount: discountAmount,
+          stripe_customer_id: customerId,
+        });
+
+      if (discountError) {
+        console.error('[Webhook] Error recording discount usage:', discountError);
+      } else {
+        console.log('[Webhook] Discount code usage recorded:', discountCodeId);
+      }
+    }
   }
 
   // Revalidar el dashboard, pricing y homepage para reflejar los cambios

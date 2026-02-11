@@ -14,3 +14,11 @@ export const supabaseAdmin = createClient(
     },
   }
 );
+
+/**
+ * Función helper para obtener el cliente admin
+ * (mantiene consistencia con createServerClient)
+ */
+export function createAdminClient() {
+  return supabaseAdmin;
+}

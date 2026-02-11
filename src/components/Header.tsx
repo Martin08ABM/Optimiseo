@@ -20,6 +20,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { isAdminEmail } from "@/src/lib/admin/auth";
 import MobileMenu from "./MobileMenu";
 
 export default async function Header() {
@@ -31,6 +32,9 @@ export default async function Header() {
 
   // Extraer URL del avatar del metadata del usuario
   const avatarUrl = user?.user_metadata?.avatar_url;
+
+  // Verificar si el usuario es admin
+  const isAdmin = user?.email ? isAdminEmail(user.email) : false;
 
   return (
     <header className="relative flex flex-row justify-between items-center border-2 border-black rounded-xl px-3 py-2 mx-auto mt-4 mb-4 bg-gray-400">
@@ -47,6 +51,13 @@ export default async function Header() {
           {user && <li><Link href="/dashboard/history">Historial</Link></li>}
           {user && <li><Link href="/dashboard/history/compare">Comparar</Link></li>}
           {user && <li><Link href="/dashboard/monitoring">Monitorizar</Link></li>}
+          {isAdmin && (
+            <li>
+              <Link href="/admin" className="text-red-600 font-bold">
+                Admin
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
 
