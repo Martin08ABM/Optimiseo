@@ -18,7 +18,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-16 px-6">
+    <section className="py-16 px-6 max-w-full">
       <h2 className="text-2xl font-bold text-white text-center mb-12">Cómo funciona</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {steps.map(step => (

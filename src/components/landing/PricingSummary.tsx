@@ -22,7 +22,7 @@ const plans = [
 
 export default function PricingSummary() {
   return (
-    <section className="py-16 px-6">
+    <section className="py-16 px-4 max-w-full">
       <h2 className="text-2xl font-bold text-white text-center mb-8">Planes</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
         {plans.map(plan => (

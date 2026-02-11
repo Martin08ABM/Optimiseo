@@ -119,14 +119,14 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
   }
 
   return (
-    <section className="flex flex-col gap-4 mt-4 items-center w-screen">
+    <section className="flex flex-col gap-4 mt-4 items-center max-w-full">
       <h1 className="font-title text-white text-md md:text-lg max-w-2xl md:max-w-3xl font-black text-center">
         Tu ayudante para impulsar tus páginas optimizando el SEO sin parecer un
         robot
       </h1>
-      <section className="w-screen flex justify-center">
-        <div className="w-screen flex justify-center">
-          <form onSubmit={sendInputToApi} className="w-screen flex justify-center">
+      <section className="max-w-full flex justify-center">
+        <div className="max-w-full flex justify-center">
+          <form onSubmit={sendInputToApi} className="max-w-full flex justify-center">
             <div className="text-center items-center  text-white flex flex-col mt-4 w-full">
               <label htmlFor="message">Escribe tu dirección URL para comprobarla:</label>
 
