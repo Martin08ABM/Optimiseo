@@ -60,14 +60,16 @@ export async function createCheckoutSession(
   let discountCodeId: string | undefined;
 
   if (discountCode) {
-    // Precio Pro (hardcodeado, debería venir de config)
-    const PRICE = 9.99;
+    // Precio Pro desde la configuración (en centavos, convertir a euros)
+    const PRICE = STRIPE_CONFIG.plans.pro.amount / 100;
 
     const validation = await validateDiscountCode(discountCode, userId, PRICE);
 
     if (validation.valid && validation.discount) {
-      // Crear cupón temporal en Stripe
-      const couponName = `${discountCode}-${userId}-${Date.now()}`;
+      // Crear cupón temporal en Stripe (nombre max 40 chars)
+      const shortUserId = userId.substring(0, 8);
+      const timestamp = Date.now().toString().slice(-6);
+      const couponName = `${discountCode}-${shortUserId}-${timestamp}`.substring(0, 40);
 
       if (validation.discount.type === 'percentage') {
         const coupon = await stripe.coupons.create({
@@ -239,7 +241,7 @@ export async function handleCheckoutSuccess(
   // Registrar uso de código de descuento si aplica
   const discountCodeId = session.metadata?.discount_code_id;
   if (discountCodeId) {
-    const originalAmount = 9.99; // Precio original
+    const originalAmount = STRIPE_CONFIG.plans.pro.amount / 100; // Precio original en euros
     const discountAmount = originalAmount - (amount / 100);
 
     if (discountAmount > 0) {

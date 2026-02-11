@@ -112,6 +112,7 @@ export default async function PricingPage() {
                 <PricingClient
                   planId={plan.id}
                   planName={plan.name}
+                  planPrice={plan.price}
                   isAuthenticated={!!user}
                   currentPlanId={currentPlanId}
                   isHighlighted={plan.highlighted}
