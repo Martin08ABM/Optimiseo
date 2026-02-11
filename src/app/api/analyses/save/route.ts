@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { analysisId, message, scrapedData } = await request.json();
+    const { analysisId, message, scrapedData, scores } = await request.json();
 
     if (!analysisId) {
       return NextResponse.json({ error: 'Missing analysisId' }, { status: 400 });
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase
       .from('analyses')
       .update({
-        result: { response: message },
+        result: { response: message, scores: scores || null },
         scraped_data: scrapedData || null,
       })
       .eq('id', analysisId)

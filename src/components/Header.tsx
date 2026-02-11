@@ -46,6 +46,7 @@ export default async function Header() {
           <li><Link href="/pricing">Precios</Link></li>
           {user && <li><Link href="/dashboard/history">Historial</Link></li>}
           {user && <li><Link href="/dashboard/history/compare">Comparar</Link></li>}
+          {user && <li><Link href="/dashboard/monitoring">Monitorizar</Link></li>}
         </ul>
       </nav>
 

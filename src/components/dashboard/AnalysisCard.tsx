@@ -3,11 +3,14 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Analysis } from '@/src/types/subscription';
+import SEOScoreDisplay from '@/src/components/SEOScoreDisplay';
+import type { SEOScores } from '@/src/lib/seo/scoreParser';
 
 const TYPE_LABELS: Record<string, string> = {
   'readability-analyzer': 'Legibilidad',
   'words-repetition': 'Repetición de palabras',
   'coherency-evaluator': 'Coherencia',
+  'keyword-suggestions': 'Keywords',
 };
 
 interface AnalysisCardProps {
@@ -26,8 +29,9 @@ export default function AnalysisCard({ analysis, isExpanded, onToggle, renderAct
     minute: '2-digit',
   });
 
-  const resultText =
-    (analysis.result as Record<string, string> | null)?.response || '';
+  const resultObj = analysis.result as Record<string, unknown> | null;
+  const resultText = (resultObj?.response as string) || '';
+  const scores = (resultObj?.scores as SEOScores) || null;
   const preview = resultText.slice(0, 150) + (resultText.length > 150 ? '...' : '');
 
   return (
@@ -41,9 +45,18 @@ export default function AnalysisCard({ analysis, isExpanded, onToggle, renderAct
             <p className="text-sm text-gray-400 truncate">{analysis.url}</p>
             <p className="text-xs text-gray-500 mt-1">{date}</p>
           </div>
-          <span className="shrink-0 text-xs bg-blue-600/80 text-white px-2 py-1 rounded-full">
-            {TYPE_LABELS[analysis.analysis_type] || analysis.analysis_type}
-          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            {scores && (
+              <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                scores.overall >= 70 ? 'bg-green-600/80' : scores.overall >= 40 ? 'bg-yellow-600/80' : 'bg-red-600/80'
+              } text-white`}>
+                {scores.overall}
+              </span>
+            )}
+            <span className="text-xs bg-blue-600/80 text-white px-2 py-1 rounded-full">
+              {TYPE_LABELS[analysis.analysis_type] || analysis.analysis_type}
+            </span>
+          </div>
         </div>
         {!isExpanded && preview && (
           <p className="text-sm text-gray-400 mt-2 line-clamp-2">{preview}</p>
@@ -52,6 +65,7 @@ export default function AnalysisCard({ analysis, isExpanded, onToggle, renderAct
 
       {isExpanded && (
         <div className="border-t border-gray-700 p-4">
+          {scores && <SEOScoreDisplay scores={scores} />}
           <div className="bg-gray-900 rounded-lg p-4 prose prose-invert prose-sm max-w-none
             prose-headings:text-white prose-headings:mt-4 prose-headings:mb-2
             prose-p:text-gray-300 prose-p:leading-relaxed

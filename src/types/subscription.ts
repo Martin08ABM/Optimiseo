@@ -10,7 +10,10 @@ export type SubscriptionStatus =
 export type AnalysisType =
   | 'readability-analyzer'
   | 'words-repetition'
-  | 'coherency-evaluator';
+  | 'coherency-evaluator'
+  | 'keyword-suggestions'
+  | 'rewrite'
+  | 'monitoring-check';
 
 export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'refunded';
 

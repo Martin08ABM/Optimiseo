@@ -5,6 +5,7 @@ import { buildPromptWithScrapedData } from "../shared/prompts";
 import type { ScrapedContent } from "../shared/types";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import { canPerformAnalysis, trackAnalysis } from "@/src/lib/subscription/utils";
+import { parseAnalysisResponse } from "@/src/lib/seo/scoreParser";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -71,6 +72,14 @@ export async function POST(request: NextRequest) {
           keywords: [],
           images: [],
           links: [],
+          canonical: null,
+          ogTags: [],
+          twitterTags: [],
+          langAttribute: null,
+          schemaMarkup: false,
+          metaRobots: null,
+          internalLinks: [],
+          externalLinks: [],
           error: 'No se encontró una URL válida en el prompt'
         };
 
@@ -100,9 +109,14 @@ export async function POST(request: NextRequest) {
       ]
     });
 
-    const responseText = message.content[0]?.type === "text"
-      ? message.content[0].text
-      : "No response generated";
+    // Concatenar todos los bloques de texto (web_search puede generar múltiples)
+    const responseText = message.content
+      .filter((block): block is Anthropic.TextBlock => block.type === "text")
+      .map(block => block.text)
+      .join("\n\n") || "No response generated";
+
+    // Parsear scores y markdown
+    const { scores, markdown } = parseAnalysisResponse(responseText);
 
     // Trackear el análisis en la base de datos (solo para contar uso)
     const analysisType = context?.selection || 'readability-analyzer';
@@ -117,7 +131,8 @@ export async function POST(request: NextRequest) {
     const updatedUsage = await getDailyUsage(user.id);
 
     return NextResponse.json({
-      message: responseText,
+      message: markdown,
+      scores,
       model: "claude-sonnet-4-5",
       provider: "claude",
       selection: context?.selection,

@@ -26,16 +26,23 @@ export default async function Home() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Si está autenticado, obtener su uso diario
+  // Si está autenticado, obtener su uso diario y plan
   let usage = undefined;
+  let isPro = false;
   if (user) {
     usage = await getDailyUsage(user.id);
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('plan_id')
+      .eq('user_id', user.id)
+      .single();
+    isPro = subscription?.plan_id === 'pro';
   }
 
   return (
     <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950 max-w-full">
       <Header />
-      <Hero isAuthenticated={!!user} usage={usage} />
+      <Hero isAuthenticated={!!user} usage={usage} isPro={isPro} />
       <section className="flex flex-col gap-4 items-center justify-center px-10 py-4">
         <div className="flex flex-col max-w-[60%]">
           <Link href="/"><RevisionTitleConcordancy /></Link>

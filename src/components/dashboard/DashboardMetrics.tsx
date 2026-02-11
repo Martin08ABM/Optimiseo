@@ -23,9 +23,12 @@ const TYPE_LABELS: Record<string, string> = {
   'readability-analyzer': 'Legibilidad',
   'words-repetition': 'Repetición',
   'coherency-evaluator': 'Coherencia',
+  'keyword-suggestions': 'Keywords',
+  'rewrite': 'Reescritura',
+  'monitoring-check': 'Monitorización',
 };
 
-const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
+const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
 
 interface DashboardMetricsProps {
   isPro: boolean;

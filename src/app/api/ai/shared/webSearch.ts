@@ -58,6 +58,14 @@ export async function scrapeURL(url: string): Promise<ScrapedContent> {
       keywords: [],
       images: [],
       links: [],
+      canonical: null,
+      ogTags: [],
+      twitterTags: [],
+      langAttribute: null,
+      schemaMarkup: false,
+      metaRobots: null,
+      internalLinks: [],
+      externalLinks: [],
       error: 'URL inválida. Debe comenzar con http:// o https://',
     };
   }
@@ -83,7 +91,27 @@ export async function scrapeURL(url: string): Promise<ScrapedContent> {
     
     const html = await response.text();
     const $ = cheerio.load(html);
-    
+
+    // Extraer datos de <head> ANTES de limpiar (script removal afecta schema markup)
+    const schemaMarkup = $('script[type="application/ld+json"]').length > 0;
+    const canonical = $('link[rel="canonical"]').attr('href') || null;
+    const langAttribute = $('html').attr('lang') || null;
+    const metaRobots = $('meta[name="robots"]').attr('content') || null;
+
+    const ogTags: { property: string; content: string }[] = [];
+    $('meta[property^="og:"]').each((_, el) => {
+      const property = $(el).attr('property') || '';
+      const content = $(el).attr('content') || '';
+      if (property && content) ogTags.push({ property, content });
+    });
+
+    const twitterTags: { name: string; content: string }[] = [];
+    $('meta[name^="twitter:"]').each((_, el) => {
+      const name = $(el).attr('name') || '';
+      const content = $(el).attr('content') || '';
+      if (name && content) twitterTags.push({ name, content });
+    });
+
     // Limpieza de elementos no deseados
     $('script, style, noscript, iframe, nav, footer, header').remove();
     
@@ -135,35 +163,41 @@ export async function scrapeURL(url: string): Promise<ScrapedContent> {
       .slice(0, 20);
     
     // Links (resolviendo URLs relativas y filtrando duplicados)
+    let parsedUrlHost: string;
+    try {
+      parsedUrlHost = new URL(url).hostname;
+    } catch {
+      parsedUrlHost = '';
+    }
+
     const seenHrefs = new Set<string>();
-    const links = $('a[href]')
-      .map((_, el) => {
-        const href = $(el).attr('href') || '';
-        const text = $(el).text().trim();
-        
-        // Resolver URLs relativas
-        let absoluteHref = href;
-        if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-          try {
-            absoluteHref = new URL(href, url).href;
-          } catch {
-            absoluteHref = href;
-          }
+    const allLinks: { href: string; text: string }[] = [];
+    $('a[href]').each((_, el) => {
+      const href = $(el).attr('href') || '';
+      const text = $(el).text().trim();
+
+      let absoluteHref = href;
+      if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+        try {
+          absoluteHref = new URL(href, url).href;
+        } catch {
+          absoluteHref = href;
         }
-        
-        return { href: absoluteHref, text };
-      })
-      .get()
-      .filter(link => {
-        // Filtrar anclas, duplicados y enlaces vacíos
-        if (!link.href || link.href.startsWith('#') || seenHrefs.has(link.href)) {
-          return false;
-        }
-        seenHrefs.add(link.href);
-        return true;
-      })
-      .slice(0, 30);
-    
+      }
+
+      if (!absoluteHref || absoluteHref.startsWith('#') || seenHrefs.has(absoluteHref)) return;
+      seenHrefs.add(absoluteHref);
+      allLinks.push({ href: absoluteHref, text });
+    });
+
+    const links = allLinks.slice(0, 30);
+    const internalLinks = allLinks.filter(l => {
+      try { return new URL(l.href).hostname === parsedUrlHost; } catch { return false; }
+    });
+    const externalLinks = allLinks.filter(l => {
+      try { return new URL(l.href).hostname !== parsedUrlHost; } catch { return false; }
+    });
+
     return {
       url,
       title,
@@ -176,6 +210,14 @@ export async function scrapeURL(url: string): Promise<ScrapedContent> {
       keywords,
       images,
       links,
+      canonical,
+      ogTags,
+      twitterTags,
+      langAttribute,
+      schemaMarkup,
+      metaRobots,
+      internalLinks,
+      externalLinks,
     };
     
   } catch (error: unknown) {
@@ -202,6 +244,14 @@ export async function scrapeURL(url: string): Promise<ScrapedContent> {
       keywords: [],
       images: [],
       links: [],
+      canonical: null,
+      ogTags: [],
+      twitterTags: [],
+      langAttribute: null,
+      schemaMarkup: false,
+      metaRobots: null,
+      internalLinks: [],
+      externalLinks: [],
       error: errorMessage,
     };
   }

@@ -14,6 +14,11 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ExportButtons from "./dashboard/ExportButtons";
+import SEOChecklist from "./SEOChecklist";
+import SEOScoreDisplay from "./SEOScoreDisplay";
+import RewritePanel from "./RewritePanel";
+import type { ScrapedContent } from "@/src/app/api/ai/shared/types";
+import type { SEOScores } from "@/src/lib/seo/scoreParser";
 
 interface AnalysisResult {
   selection: string;
@@ -21,6 +26,7 @@ interface AnalysisResult {
   message: string;
   analysisId: string | null;
   scrapedData: Record<string, unknown> | null;
+  scores: SEOScores | null;
 }
 
 interface UsageStats {
@@ -32,15 +38,17 @@ interface UsageStats {
 interface HeroProps {
   isAuthenticated: boolean;
   usage?: UsageStats;
+  isPro?: boolean;
 }
 
-export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps) {
+export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: HeroProps) {
 
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [usage, setUsage] = useState<UsageStats | undefined>(initialUsage)
   const [saved, setSaved] = useState(false)
+  const [monitored, setMonitored] = useState(false)
 
   // Actualizar el estado cuando cambien las props
   useEffect(() => {
@@ -53,6 +61,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
     setError(null);
     setResult(null);
     setSaved(false);
+    setMonitored(false);
 
     const formData = new FormData(e.currentTarget);
     const message = formData.get('message') as string;
@@ -167,6 +176,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
                   <option value="readability-analyzer">Comprobador de legibilidad</option>
                   <option value="words-repetition">Comprobar la repetición de palabras</option>
                   <option value="coherency-evaluator">Comprobar la coherencia</option>
+                  <option value="keyword-suggestions">Sugerencias de Keywords</option>
                 </select>
               </div>
               <button
@@ -240,9 +250,21 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
             </div>
 
             <div className="mb-4 text-sm text-gray-400">
-              <p><strong>Tipo:</strong> {result.selection === 'readability-analyzer' ? 'Legibilidad' : result.selection === 'words-repetition' ? 'Repetición de palabras' : 'Coherencia'}</p>
+              <p><strong>Tipo:</strong> {result.selection === 'readability-analyzer' ? 'Legibilidad' : result.selection === 'words-repetition' ? 'Repetición de palabras' : result.selection === 'keyword-suggestions' ? 'Sugerencias de Keywords' : 'Coherencia'}</p>
               <p><strong>Proveedor:</strong> {result.provider}</p>
             </div>
+
+            {result.scores && (
+              <SEOScoreDisplay scores={result.scores} />
+            )}
+
+            {result.scrapedData && !(result.scrapedData as unknown as ScrapedContent).error && (
+              <SEOChecklist scrapedData={result.scrapedData as unknown as ScrapedContent} />
+            )}
+
+            {result.scrapedData && !(result.scrapedData as unknown as ScrapedContent).error && (
+              <RewritePanel scrapedData={result.scrapedData as unknown as ScrapedContent} />
+            )}
 
             <div className="bg-gray-900 rounded-lg p-4 prose prose-invert prose-sm max-w-none
               prose-headings:text-white prose-headings:mt-4 prose-headings:mb-2
@@ -271,6 +293,7 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
                       analysisId: result.analysisId,
                       message: result.message,
                       scrapedData: result.scrapedData,
+                      scores: result.scores,
                     }),
                   });
                   if (res.ok) setSaved(true);
@@ -297,6 +320,42 @@ export default function Hero({ isAuthenticated, usage: initialUsage }: HeroProps
                 </>
               )}
             </button>
+
+            {isPro && (result.scrapedData?.url as string) && (
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await fetch('/api/monitoring', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ url: result.scrapedData?.url as string }),
+                    });
+                    if (res.ok) setMonitored(true);
+                  } catch {
+                    // silent fail
+                  }
+                }}
+                disabled={monitored}
+                className="mt-2 flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-default text-white font-semibold px-5 py-2 rounded-xl transition-colors text-sm"
+              >
+                {monitored ? (
+                  <>
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Monitorizada
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Monitorizar URL
+                  </>
+                )}
+              </button>
+            )}
 
             <ExportButtons
               analysisResult={result.message}

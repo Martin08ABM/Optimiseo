@@ -52,17 +52,25 @@ export async function getDailyUsage(userId: string): Promise<UsageStats> {
   const limit =
     (subscription?.plans as unknown as Plan)?.daily_analysis_limit || 5;
 
-  // Get today's usage count
+  // Get today's usage count (rewrites count at 0.5x weight)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const { count } = await supabase
+  const { count: regularCount } = await supabase
     .from('analyses')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
+    .neq('analysis_type', 'rewrite')
     .gte('created_at', today.toISOString());
 
-  const used = count || 0;
+  const { count: rewriteCount } = await supabase
+    .from('analyses')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('analysis_type', 'rewrite')
+    .gte('created_at', today.toISOString());
+
+  const used = (regularCount || 0) + Math.ceil((rewriteCount || 0) * 0.5);
   const remaining = Math.max(0, limit - used);
 
   // Calculate reset time (midnight tomorrow)

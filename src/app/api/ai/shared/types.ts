@@ -11,6 +11,14 @@ export interface ScrapedContent {
   images: { src: string; alt: string }[];
   links: { href: string; text: string }[];
   error?: string;
+  canonical?: string | null;
+  ogTags?: { property: string; content: string }[];
+  twitterTags?: { name: string; content: string }[];
+  langAttribute?: string | null;
+  schemaMarkup?: boolean;
+  metaRobots?: string | null;
+  internalLinks?: { href: string; text: string }[];
+  externalLinks?: { href: string; text: string }[];
 }
 
 export interface AIRequest {

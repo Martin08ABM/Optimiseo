@@ -29,6 +29,7 @@ export default function HistoryClient({ analyses }: HistoryClientProps) {
           <option value="readability-analyzer">Legibilidad</option>
           <option value="words-repetition">Repetición de palabras</option>
           <option value="coherency-evaluator">Coherencia</option>
+          <option value="keyword-suggestions">Sugerencias de Keywords</option>
         </select>
       </div>
 
