@@ -31,6 +31,7 @@ export default function MobileMenu({ isAuthenticated }: MobileMenuProps) {
           <nav className="flex flex-col gap-4 text-black font-sans">
             <Link href="/usecase" onClick={() => setIsOpen(false)}>Casos de uso</Link>
             <Link href="/pricing" onClick={() => setIsOpen(false)}>Precios</Link>
+            <Link href="/guia-html" onClick={() => setIsOpen(false)}>Guía HTML</Link>
             <hr className="border-black" />
             {isAuthenticated ? (
               <>

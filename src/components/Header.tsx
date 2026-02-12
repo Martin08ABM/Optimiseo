@@ -48,6 +48,7 @@ export default async function Header() {
       <nav className="hidden md:flex flex-row ml-6 text-black text-lg font-sans">
         <ul className="flex flex-row gap-8">
           <li><Link href="/pricing">Precios</Link></li>
+          <li><Link href="/guia-html">Guía HTML</Link></li>
           {user && <li><Link href="/dashboard/history">Historial</Link></li>}
           {user && <li><Link href="/dashboard/history/compare">Comparar</Link></li>}
           {user && <li><Link href="/dashboard/monitoring">Monitorizar</Link></li>}

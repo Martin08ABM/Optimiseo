@@ -282,6 +282,28 @@ export default function Hero({ isAuthenticated, usage: initialUsage, isPro }: He
               </span>
             </div>
 
+            {/* Banner informativo sobre términos HTML */}
+            <div className="mb-6 bg-blue-900/30 border border-blue-500/30 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">📚</span>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-200 mb-2">
+                    ¿Ves términos como <strong className="text-blue-300">H1, H2, P</strong> en el análisis y no sabes qué significan?
+                  </p>
+                  <a
+                    href="/guia-html"
+                    target="_blank"
+                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors"
+                  >
+                    Consulta nuestra Guía de Etiquetas HTML
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
             <div className="mb-4 text-sm text-gray-400">
               <p><strong>Tipo:</strong> {result.selection === 'readability-analyzer' ? 'Legibilidad' : result.selection === 'words-repetition' ? 'Repetición de palabras' : result.selection === 'keyword-suggestions' ? 'Sugerencias de Keywords' : 'Coherencia'}</p>
               <p><strong>Proveedor:</strong> {result.provider}</p>
