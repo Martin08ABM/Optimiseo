@@ -20,6 +20,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import MatomoTagManager from "@/src/components/MatomoTagManager";
 
 // Configuración de la fuente Atkinson Hyperlegible
 // Fuente monoespaciada optimizada para legibilidad
@@ -100,24 +101,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${atkinsonHyperlegible.variable} ${googleSansCode.variable} antialiased`}>
-    <head>
+      <head>
         <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
-        {/* Matomo Tag Manager */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              var _mtm = window._mtm = window._mtm || [];
-              _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
-              (function() {
-                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                g.async=true; g.src='https://cdn.matomo.cloud/optimiseo.matomo.cloud/container_seVuGRtt.js';
-                s.parentNode.insertBefore(g,s);
-              })();
-            `,
-          }}
-        />
-    </head>
+      </head>
       <body cz-shortcut-listen="true">
+        {/* Matomo Tag Manager */}
+        <MatomoTagManager />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
