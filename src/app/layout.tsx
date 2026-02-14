@@ -20,7 +20,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import Script from "next/script";
 
 // Configuración de la fuente Atkinson Hyperlegible
 // Fuente monoespaciada optimizada para legibilidad
@@ -104,9 +103,7 @@ export default function RootLayout({
     <head>
         <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
         {/* Matomo Tag Manager */}
-        <Script
-          id="matomo-tag-manager"
-          strategy="afterInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               var _mtm = window._mtm = window._mtm || [];
