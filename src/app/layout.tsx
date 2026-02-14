@@ -103,21 +103,18 @@ export default function RootLayout({
     <html lang="es" className={`${atkinsonHyperlegible.variable} ${googleSansCode.variable} antialiased`}>
     <head>
         <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
-        {/* Matomo Analytics */}
+        {/* Matomo Tag Manager */}
         <Script
-          id="matomo-analytics"
+          id="matomo-tag-manager"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              var _paq = window._paq = window._paq || [];
-              _paq.push(['trackPageView']);
-              _paq.push(['enableLinkTracking']);
+              var _mtm = window._mtm = window._mtm || [];
+              _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
               (function() {
-                var u="https://optimiseo.matomo.cloud/";
-                _paq.push(['setTrackerUrl', u+'matomo.php']);
-                _paq.push(['setSiteId', '1']);
                 var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                g.async=true; g.src='https://cdn.matomo.cloud/optimiseo.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
+                g.async=true; g.src='https://cdn.matomo.cloud/optimiseo.matomo.cloud/container_seVuGRtt.js';
+                s.parentNode.insertBefore(g,s);
               })();
             `,
           }}
