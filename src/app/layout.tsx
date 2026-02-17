@@ -21,6 +21,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import MatomoTagManager from "@/src/components/MatomoTagManager";
+import { Analytics } from "@vercel/analytics/next"
 
 // Configuración de la fuente Atkinson Hyperlegible
 // Fuente monoespaciada optimizada para legibilidad
@@ -130,6 +131,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <Analytics />
       </body>
     </html>
   );
