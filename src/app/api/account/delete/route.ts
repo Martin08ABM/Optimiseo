@@ -7,7 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/src/lib/supabase/server';
-import { supabaseAdmin } from '@/src/lib/supabase/admin';
+import { createAdminClient } from '@/src/lib/supabase/admin';
 
 export async function DELETE() {
   try {
@@ -67,6 +67,7 @@ export async function DELETE() {
       .eq('user_id', user.id);
 
     // 4. Eliminar usuario usando el cliente admin
+    const supabaseAdmin = createAdminClient();
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
       user.id
     );

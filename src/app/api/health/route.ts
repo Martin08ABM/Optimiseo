@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/src/lib/supabase/admin';
+import { createAdminClient } from '@/src/lib/supabase/admin';
 import { stripe } from '@/src/lib/stripe/config';
 
 export const dynamic = 'force-dynamic';
@@ -9,6 +9,7 @@ export async function GET() {
   let allHealthy = true;
 
   // Check Supabase
+  const supabaseAdmin = createAdminClient();
   const supabaseStart = Date.now();
   try {
     const { error } = await supabaseAdmin.from('plans').select('id').limit(1);

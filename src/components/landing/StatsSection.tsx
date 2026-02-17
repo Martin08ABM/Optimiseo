@@ -1,9 +1,10 @@
-import { supabaseAdmin } from '@/src/lib/supabase/admin';
+import { createAdminClient } from '@/src/lib/supabase/admin';
 
 export default async function StatsSection() {
   let totalAnalyses = 0;
 
   try {
+    const supabaseAdmin = createAdminClient();
     const { count } = await supabaseAdmin
       .from('analyses')
       .select('*', { count: 'exact', head: true });

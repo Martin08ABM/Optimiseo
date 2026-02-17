@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/src/lib/supabase/admin';
+import { createAdminClient } from '@/src/lib/supabase/admin';
 import { scrapeURL } from '@/src/app/api/ai/shared/webSearch';
 import { generateSEOChecklist } from '@/src/lib/seo/checklist';
 
@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const now = new Date();
+    const supabaseAdmin = createAdminClient();
 
     // Fetch active URLs that are due for checking
     const { data: urls, error: fetchError } = await supabaseAdmin

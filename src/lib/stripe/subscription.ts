@@ -1,6 +1,6 @@
 import { stripe, STRIPE_CONFIG } from './config';
 import { createServerSupabaseClient } from '@/src/lib/supabase/server';
-import { supabaseAdmin } from '@/src/lib/supabase/admin';
+import { createAdminClient } from '@/src/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type Stripe from 'stripe';
 import { validateDiscountCode } from '@/src/lib/admin/discounts';
@@ -183,6 +183,8 @@ export async function handleCheckoutSuccess(
       : null,
   };
 
+  const supabaseAdmin = createAdminClient();
+
   // Try update first
   const { data: updated, error: updateError } = await supabaseAdmin
     .from('subscriptions')
@@ -281,6 +283,7 @@ export async function handleSubscriptionUpdate(
     return;
   }
 
+  const supabaseAdmin = createAdminClient();
   const status = subscription.status;
   const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
@@ -325,6 +328,8 @@ export async function handleSubscriptionDeleted(
     console.error('No user_id in subscription metadata');
     return;
   }
+
+  const supabaseAdmin = createAdminClient();
 
   // Downgrade to free plan
   const { error } = await supabaseAdmin
