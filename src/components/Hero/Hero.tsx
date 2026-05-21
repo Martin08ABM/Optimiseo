@@ -13,10 +13,10 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import ExportButtons from "./dashboard/ExportButtons";
-import SEOChecklist from "./SEOChecklist";
-import SEOScoreDisplay from "./SEOScoreDisplay";
-import RewritePanel from "./RewritePanel";
+import ExportButtons from "../dashboard/ExportButtons";
+import SEOChecklist from "../SEOChecklist";
+import SEOScoreDisplay from "../SEOScoreDisplay";
+import RewritePanel from "../RewritePanel";
 import type { ScrapedContent } from "@/src/app/api/ai/shared/types";
 import type { SEOScores } from "@/src/lib/seo/scoreParser";
 

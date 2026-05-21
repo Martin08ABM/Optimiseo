@@ -19,7 +19,7 @@ OptimiSEO es la herramienta definitiva para creadores de contenido, bloggers, re
 ## ✨ Características Principales
 
 ### 🤖 Análisis con IA de Última Generación
-Utilizamos Claude Sonnet 4.5 de Anthropic, uno de los modelos de IA más avanzados, para ofrecerte análisis precisos y recomendaciones accionables que realmente mejoran tu contenido.
+Utilizamos Google Gemini (Gemini 2.5 Flash), uno de los modelos de IA más avanzados con capacidades integradas de Google Search Grounding, para ofrecerte análisis precisos y recomendaciones accionables en tiempo real que realmente mejoran tu contenido.
 
 ### 🔐 Seguridad y Privacidad
 - Sistema de autenticación robusto con encriptación de contraseñas
@@ -88,7 +88,7 @@ Análisis completos en segundos, no en horas. Dedica más tiempo a crear conteni
 No solo te decimos qué está mal, te mostramos exactamente cómo mejorarlo con sugerencias específicas y prácticas.
 
 ### 🔬 Precisión de IA Avanzada
-Utilizamos tecnología de IA de última generación (Claude Sonnet 4.5 de Anthropic) para ofrecerte análisis precisos y confiables.
+Utilizamos tecnología de IA de última generación (Google Gemini 2.5) para ofrecerte análisis precisos, contextualizados y extremadamente confiables.
 
 ### 📊 Todo en un Solo Lugar
 Desde el análisis de legibilidad hasta la extracción de keywords, todo lo que necesitas en una sola plataforma.
@@ -103,7 +103,7 @@ Para desarrolladores interesados, OptimiSEO está construido con tecnologías mo
 - **TypeScript** para código robusto y mantenible
 - **Supabase** para autenticación y base de datos
 - **Tailwind CSS** para un diseño responsive y elegante
-- **Claude Sonnet 4.5** de Anthropic para análisis de IA
+- **Google Gemini** (Gemini 2.5 Flash) para el motor de análisis y reescritura de IA
 
 ## 🎓 Casos de Uso
 
@@ -135,7 +135,7 @@ Valida y optimiza tu trabajo con análisis profesionales impulsados por IA antes
 
 ## 👨‍💻 Autor
 
-Desarrollado con ❤️ por **Martin Adolfo Bravo Montaños**
+Desarrollado con ❤️ por **Martin Adolfo Bravo Montaños** con la ayuda de **Gemini** y **Claude** de IA.
 
 *Creado para ayudar a creadores de contenido a mejorar el SEO y la calidad de sus publicaciones web.*
 

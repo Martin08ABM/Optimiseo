@@ -6,9 +6,10 @@ import RewriteButton from './RewriteButton';
 
 interface RewritePanelProps {
   scrapedData: ScrapedContent;
+  onApplyText?: (elementType: string, text: string) => void;
 }
 
-export default function RewritePanel({ scrapedData }: RewritePanelProps) {
+export default function RewritePanel({ scrapedData, onApplyText }: RewritePanelProps) {
   const [expanded, setExpanded] = useState(false);
 
   const context = { url: scrapedData.url, title: scrapedData.title };
@@ -36,7 +37,7 @@ export default function RewritePanel({ scrapedData }: RewritePanelProps) {
                   <span className="text-xs text-gray-500 uppercase">Title</span>
                   <p className="text-gray-300 text-sm mt-1 truncate">{scrapedData.title}</p>
                 </div>
-                <RewriteButton originalText={scrapedData.title} elementType="title" context={context} />
+                <RewriteButton originalText={scrapedData.title} elementType="title" context={context} onApplyText={onApplyText} />
               </div>
             </div>
           )}
@@ -49,7 +50,7 @@ export default function RewritePanel({ scrapedData }: RewritePanelProps) {
                   <span className="text-xs text-gray-500 uppercase">Meta Description</span>
                   <p className="text-gray-300 text-sm mt-1">{scrapedData.description}</p>
                 </div>
-                <RewriteButton originalText={scrapedData.description} elementType="meta-description" context={context} />
+                <RewriteButton originalText={scrapedData.description} elementType="meta-description" context={context} onApplyText={onApplyText} />
               </div>
             </div>
           )}
@@ -62,7 +63,7 @@ export default function RewritePanel({ scrapedData }: RewritePanelProps) {
                   <span className="text-xs text-gray-500 uppercase">H1</span>
                   <p className="text-gray-300 text-sm mt-1">{scrapedData.h1[0]}</p>
                 </div>
-                <RewriteButton originalText={scrapedData.h1[0]} elementType="h1" context={context} />
+                <RewriteButton originalText={scrapedData.h1[0]} elementType="h1" context={context} onApplyText={onApplyText} />
               </div>
             </div>
           )}
@@ -76,7 +77,7 @@ export default function RewritePanel({ scrapedData }: RewritePanelProps) {
                     <span className="text-xs text-gray-500 uppercase">Párrafo {i + 1}</span>
                     <p className="text-gray-300 text-sm mt-1 line-clamp-3">{p}</p>
                   </div>
-                  <RewriteButton originalText={p} elementType="paragraph" context={context} />
+                  <RewriteButton originalText={p} elementType="paragraph" context={context} onApplyText={onApplyText} />
                 </div>
               </div>
             )

@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { createAIProvider } from "@/src/lib/openrouter/provider";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import { canPerformAnalysis, trackAnalysis } from "@/src/lib/subscription/utils";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const aiProvider = createAIProvider();
 
 const ELEMENT_INSTRUCTIONS: Record<string, string> = {
   'meta-description': 'Máximo 155 caracteres. Incluye un call-to-action y la keyword principal. Debe ser atractiva para aumentar el CTR.',
@@ -58,17 +56,13 @@ Texto original:
 
 Responde SOLO con el texto mejorado, sin explicaciones adicionales, sin comillas, sin prefijos.`;
 
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
-      max_tokens: 1024,
-      temperature: 0.7,
+    const response = await aiProvider.complete({
       messages: [{ role: "user", content: prompt }],
+      maxTokens: 1024,
+      temperature: 0.7,
     });
 
-    const improved = message.content
-      .filter((block): block is Anthropic.TextBlock => block.type === "text")
-      .map(block => block.text)
-      .join("") || originalText;
+    const improved = response.content || originalText;
 
     // Track as rewrite (counts 0.5x)
     await trackAnalysis(user.id, context?.url || 'rewrite', 'rewrite');

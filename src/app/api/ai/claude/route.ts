@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { createAIProvider } from "@/src/lib/openrouter/provider";
 import { scrapeURL } from "../shared/webSearch";
 import { buildPromptWithScrapedData } from "../shared/prompts";
 import type { ScrapedContent } from "../shared/types";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import { canPerformAnalysis, trackAnalysis } from "@/src/lib/subscription/utils";
 import { parseAnalysisResponse } from "@/src/lib/seo/scoreParser";
+import { analysisCache } from "@/src/lib/cache/analysis";
+import { AnalysisRequestSchema, getValidationErrors } from "@/src/lib/validation/schemas";
+import { ErrorTracker, PerformanceTracker } from "@/src/lib/logger/errorTracker";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const aiProvider = createAIProvider();
 
 // Función para extraer URL del texto
 function extractURL(text: string): string | null {
@@ -19,6 +20,7 @@ function extractURL(text: string): string | null {
 }
 
 export async function POST(request: NextRequest) {
+  let userId: string | undefined = undefined;
   try {
     // Verificar autenticación
     const supabase = await createServerSupabaseClient();
@@ -30,6 +32,8 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    userId = user.id;
 
     // Verificar límites de análisis
     const canAnalyze = await canPerformAnalysis(user.id);
@@ -45,75 +49,130 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { prompt, context } = await request.json();
+    const body = await request.json();
     
-    if (!prompt) {
+    // Validate request body with Zod
+    const validation = getValidationErrors(AnalysisRequestSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Missing prompt" },
+        { 
+          error: "Datos de entrada inválidos", 
+          details: validation.errors 
+        },
         { status: 400 }
       );
     }
+    
+    const { prompt, context } = validation.data;
+    const { selection, targetKeyword, competitorUrls, directText } = context || {};
 
     // Extraemos la URL del prompt
-    const extractedURL = extractURL(prompt);
+    const extractedURL = directText ? null : extractURL(prompt);
+    
+    // Try to get cached result
+    const cacheKey = directText 
+      ? `direct-${directText.slice(0, 100)}` 
+      : (extractedURL || prompt);
+    const cachedResult = await analysisCache.get('analysis', cacheKey);
+    
+    if (cachedResult) {
+      // Return cached result without counting as new analysis
+      return NextResponse.json({
+        ...cachedResult,
+        cached: true,
+        usage: canAnalyze.usage, // Use current usage without incrementing
+      });
+    }
 
-    // Scrapeamos la URL si se encontró una válida
-    const scrapedData: ScrapedContent = extractedURL
-      ? await scrapeURL(extractedURL)
-      : {
-          url: '',
-          title: '',
-          description: '',
-          h1: [],
-          h2: [],
-          h3: [],
-          paragraphs: [],
-          wordCount: 0,
-          keywords: [],
-          images: [],
-          links: [],
-          canonical: null,
-          ogTags: [],
-          twitterTags: [],
-          langAttribute: null,
-          schemaMarkup: false,
-          metaRobots: null,
-          internalLinks: [],
-          externalLinks: [],
-          error: 'No se encontró una URL válida en el prompt'
-        };
+    // Scrapeamos la URL o usamos el texto directo
+    let scrapedData: ScrapedContent;
+    if (directText) {
+      const calculateWordCount = (t: string) => t.trim().split(/\s+/).filter(w => w.length > 0).length;
+      const words = directText.toLowerCase().replace(/[^\w\sáéíóúñü]/g, '').split(/\s+/).filter(w => w.length > 3);
+      const wordCountMap = new Map<string, number>();
+      words.forEach(w => wordCountMap.set(w, (wordCountMap.get(w) || 0) + 1));
+      const keywords = Array.from(wordCountMap.entries())
+        .map(([word, count]) => ({ word, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+
+      scrapedData = {
+        url: '',
+        title: prompt || 'Borrador sin título',
+        description: '',
+        h1: prompt ? [prompt] : [],
+        h2: [],
+        h3: [],
+        paragraphs: directText.split('\n\n').filter(p => p.trim().length > 0),
+        wordCount: calculateWordCount(directText),
+        keywords,
+        images: [],
+        links: [],
+        canonical: null,
+        ogTags: [],
+        twitterTags: [],
+        langAttribute: 'es',
+        schemaMarkup: false,
+        metaRobots: null,
+        internalLinks: [],
+        externalLinks: []
+      };
+    } else {
+      scrapedData = extractedURL
+        ? await scrapeURL(extractedURL)
+        : {
+            url: '',
+            title: '',
+            description: '',
+            h1: [],
+            h2: [],
+            h3: [],
+            paragraphs: [],
+            wordCount: 0,
+            keywords: [],
+            images: [],
+            links: [],
+            canonical: null,
+            ogTags: [],
+            twitterTags: [],
+            langAttribute: null,
+            schemaMarkup: false,
+            metaRobots: null,
+            internalLinks: [],
+            externalLinks: [],
+            error: 'No se encontró una URL válida en el prompt'
+          };
+    }
+
+    // Scrapeamos competidores si se proporcionaron
+    let competitorData: ScrapedContent[] = [];
+    if (competitorUrls && competitorUrls.length > 0) {
+      const scrapePromises = competitorUrls
+        .filter(u => u && u.trim().length > 0)
+        .map(u => scrapeURL(u.trim()));
+        
+      const scrapeResults = await Promise.allSettled(scrapePromises);
+      competitorData = scrapeResults
+        .filter(r => r.status === 'fulfilled')
+        .map(r => (r as PromiseFulfilledResult<ScrapedContent>).value);
+    }
 
     const fullPrompt = buildPromptWithScrapedData(
-      extractedURL || prompt,
+      directText ? 'Borrador de texto' : (extractedURL || prompt),
       scrapedData,
-      context?.selection
+      selection,
+      targetKeyword,
+      competitorData
     );
     
-    // Llamada  a Claude Sonnet 4.5
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
-      max_tokens: 4096,
+    // Llamada al proveedor de IA unificado (auto-detecta Gemini, OpenRouter o Claude)
+    const response = await aiProvider.complete({
+      messages: [{ role: "user", content: fullPrompt }],
+      maxTokens: 4096,
       temperature: 0.85,
-      messages: [ 
-        {
-          role: "user",
-          content: fullPrompt,
-        },
-      ],
-      tools: [
-        {
-          "type": "web_search_20250305",
-          "name": "web_search",
-          "max_uses": 5
-        }
-      ]
     });
 
-    // Concatenar todos los bloques de texto (web_search puede generar múltiples)
-    const responseText = message.content
-      .filter((block): block is Anthropic.TextBlock => block.type === "text")
-      .map(block => block.text)
-      .join("\n\n") || "No response generated";
+    const responseText = response.content || "No response generated";
 
     // Parsear scores y markdown
     const { scores, markdown } = parseAnalysisResponse(responseText);
@@ -130,19 +189,31 @@ export async function POST(request: NextRequest) {
     const { getDailyUsage } = await import('@/src/lib/subscription/utils');
     const updatedUsage = await getDailyUsage(user.id);
 
-    return NextResponse.json({
+    const result = {
       message: markdown,
       scores,
-      model: "claude-sonnet-4-5",
-      provider: "claude",
+      model: response.model,
+      provider: 'gemini',
       selection: context?.selection,
       scrapedData,
       usage: updatedUsage,
       analysisId: trackResult.analysisId || null,
-    });
+      cost: response.cost || 0,
+      targetKeyword,
+      competitorData,
+    };
+    
+    // Cache the result for 24 hours
+    await analysisCache.set('analysis', cacheKey, result, { ttl: 86400 });
+
+    return NextResponse.json(result);
 
   } catch (error: unknown) {
-    console.error("Error in Claude API:", error);
+    ErrorTracker.trackAnalysisError(error, {
+      userId,
+      path: request.url,
+      method: request.method,
+    });
 
     const errorMessage = error instanceof Error ? error.message : "Internal server error";
 

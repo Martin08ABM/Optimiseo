@@ -1,57 +1,75 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock Supabase server client
-const mockSelect = vi.fn();
-const mockEq = vi.fn();
-const mockSingle = vi.fn();
-const mockGte = vi.fn();
-const mockOrder = vi.fn();
-const mockLimit = vi.fn();
-const mockInsert = vi.fn();
-const mockNot = vi.fn();
+// Mock state variables that can be customized per test
+let mockSubscriptionData: any = { plan_id: 'free', plans: { daily_analysis_limit: 5 } };
+let mockSubscriptionError: any = null;
+let mockRegularCount = 3;
+let mockRewriteCount = 2;
+let mockInsertData: any = { id: 'test-analysis-id' };
+let mockInsertError: any = null;
+let analysesGteCallCount = 0;
 
-const mockFrom = vi.fn(() => ({
-  select: mockSelect,
-  insert: mockInsert,
-}));
-
-mockSelect.mockReturnValue({
-  eq: mockEq,
+vi.mock('@/src/lib/supabase/server', () => {
+  return {
+    createServerSupabaseClient: vi.fn(() => ({
+      from: vi.fn((table) => {
+        if (table === 'subscriptions') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            single: vi.fn().mockImplementation(async () => {
+              if (!mockSubscriptionData) {
+                return { data: null, error: mockSubscriptionError || { message: 'Not found' } };
+              }
+              return {
+                data: {
+                  ...mockSubscriptionData,
+                  status: 'active',
+                  plans: mockSubscriptionData.plans || { daily_analysis_limit: 5 }
+                },
+                error: null
+              };
+            })
+          };
+        }
+        if (table === 'analyses') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            neq: vi.fn().mockReturnThis(),
+            gte: vi.fn().mockImplementation(async () => {
+              analysesGteCallCount++;
+              if (analysesGteCallCount === 1) {
+                return { count: mockRegularCount, error: null };
+              }
+              return { count: mockRewriteCount, error: null };
+            }),
+            insert: vi.fn().mockReturnThis(),
+            single: vi.fn().mockImplementation(async () => {
+              if (mockInsertError) {
+                return { data: null, error: mockInsertError };
+              }
+              return { data: mockInsertData, error: null };
+            })
+          };
+        }
+        return {};
+      })
+    }))
+  };
 });
-
-mockEq.mockReturnValue({
-  single: mockSingle,
-  gte: mockGte,
-  eq: mockEq,
-});
-
-mockGte.mockReturnValue({
-  order: mockOrder,
-  eq: mockEq,
-});
-
-mockOrder.mockReturnValue({
-  limit: mockLimit,
-});
-
-mockNot.mockReturnValue({
-  order: mockOrder,
-});
-
-vi.mock('@/src/lib/supabase/server', () => ({
-  createServerSupabaseClient: vi.fn(() => ({
-    from: mockFrom,
-  })),
-}));
 
 describe('subscription/utils', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset chain defaults
-    mockSelect.mockReturnValue({ eq: mockEq });
-    mockEq.mockReturnValue({ single: mockSingle, gte: mockGte, eq: mockEq });
-    mockGte.mockReturnValue({ order: mockOrder, eq: mockEq });
-    mockOrder.mockReturnValue({ limit: mockLimit });
+    // Reset mock states before each test
+    mockSubscriptionData = { plan_id: 'free', plans: { daily_analysis_limit: 5 } };
+    mockSubscriptionError = null;
+    mockRegularCount = 3;
+    mockRewriteCount = 2;
+    mockInsertData = { id: 'test-analysis-id' };
+    mockInsertError = null;
+    analysesGteCallCount = 0;
   });
 
   describe('requiresPro', () => {
@@ -68,25 +86,6 @@ describe('subscription/utils', () => {
 
   describe('getDailyUsage', () => {
     it('returns usage stats with correct calculations', async () => {
-      // Setup mock chain for subscription query
-      mockSingle.mockResolvedValueOnce({
-        data: { plan_id: 'free', plans: { daily_analysis_limit: 5 } },
-        error: null,
-      });
-
-      // Setup mock chain for count query
-      mockEq.mockReturnValueOnce({
-        single: mockSingle,
-        gte: mockGte,
-        eq: mockEq,
-      });
-      mockSelect.mockReturnValueOnce({ eq: mockEq });
-      mockEq.mockReturnValueOnce({
-        gte: vi.fn().mockResolvedValue({ count: 3 }),
-        single: mockSingle,
-        eq: mockEq,
-      });
-
       const { getDailyUsage } = await import('@/src/lib/subscription/utils');
       const result = await getDailyUsage('test-user-id');
 
@@ -95,12 +94,17 @@ describe('subscription/utils', () => {
       expect(result).toHaveProperty('remaining');
       expect(result).toHaveProperty('resetAt');
       expect(result.resetAt).toBeInstanceOf(Date);
+      // 3 regular count + 2 rewrite count (2 * 0.5 = 1) = 4 used
+      expect(result.used).toBe(4);
+      expect(result.limit).toBe(5);
+      expect(result.remaining).toBe(1);
     });
   });
 
   describe('canPerformAnalysis', () => {
     it('returns not allowed when no subscription found', async () => {
-      mockSingle.mockResolvedValueOnce({ data: null, error: { message: 'Not found' } });
+      mockSubscriptionData = null;
+      mockSubscriptionError = { message: 'Not found' };
 
       const { canPerformAnalysis } = await import('@/src/lib/subscription/utils');
       const result = await canPerformAnalysis('non-existent-user');
@@ -112,7 +116,7 @@ describe('subscription/utils', () => {
 
   describe('trackAnalysis', () => {
     it('returns error when no subscription found', async () => {
-      mockSingle.mockResolvedValueOnce({ data: null, error: null });
+      mockSubscriptionData = null;
 
       const { trackAnalysis } = await import('@/src/lib/subscription/utils');
       const result = await trackAnalysis('test-user', 'https://example.com', 'readability-analyzer');
