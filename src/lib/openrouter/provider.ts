@@ -57,6 +57,11 @@ export class AIProvider {
 
   private async callGemini(request: CompletionRequest): Promise<CompletionResponse> {
     const apiKey = this.config.apiKey;
+    
+    if (!apiKey) {
+      throw new Error('Falta configurar la variable GEMINI_API_KEY en .env.local');
+    }
+    
     let modelName = this.config.model || 'gemini-2.5-flash';
     
     if (modelName.startsWith('google/')) {
@@ -125,11 +130,7 @@ export class AIProvider {
 
   // Inicializa el proveedor usando la variable de entorno de Gemini
   static fromEnvironment(): AIProvider {
-    const geminiKey = process.env.GEMINI_API_KEY;
-    
-    if (!geminiKey) {
-      throw new Error('Falta configurar la variable GEMINI_API_KEY en .env.local');
-    }
+    const geminiKey = process.env.GEMINI_API_KEY || '';
     
     return new AIProvider({
       apiKey: geminiKey,
@@ -140,11 +141,7 @@ export class AIProvider {
 
 // Inicializa el proveedor de IA con soporte exclusivo de Gemini
 export function createAIProvider(config: Partial<AIProviderConfig> = {}): AIProvider {
-  const apiKey = config.apiKey || process.env.GEMINI_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('Falta configurar la variable GEMINI_API_KEY en .env.local');
-  }
+  const apiKey = config.apiKey || process.env.GEMINI_API_KEY || '';
   
   return new AIProvider({
     apiKey,
