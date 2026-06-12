@@ -1,0 +1,760 @@
+/* ==========================================
+   OptimiSEO Design System & Global Styles
+   ========================================== */
+
+/* 1. TIPOGRAFÍAS LOCALES (Coincidiendo con la aplicación principal) */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Mono';
+  src: url('/fonts/AtkinsonHyperlegibleMono-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Mono';
+  src: url('/fonts/AtkinsonHyperlegibleMono-Italic-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Code';
+  src: url('/fonts/GoogleSansCode-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Code';
+  src: url('/fonts/GoogleSansCode-Italic-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BBHBartle';
+  src: url('/fonts/BBHBartle-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 2. VARIABLES DE DISEÑO (Brutalismo Premium Modo Oscuro) */
+:root {
+  --font-title: 'Atkinson Hyperlegible Mono', monospace;
+  --font-sans: 'Google Sans Code', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Paleta de Colores */
+  --bg-primary: #000000;
+  --bg-secondary: #0d0f12;
+  --bg-card: #15181e;
+  --bg-card-hover: #1e232b;
+  --bg-header: #9ca3af; /* Gray-400 (Neo-brutalist header) */
+  --border-dark: #000000;
+  --border-light: #2d333f;
+  --border-muted: #3f4756;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #9ea8b6;
+  --text-muted: #6b778c;
+  --text-dark: #000000;
+  
+  /* Acentos Premium */
+  --accent-blue: #2563eb;
+  --accent-blue-hover: #1d4ed8;
+  --accent-blue-light: rgba(37, 99, 235, 0.15);
+  
+  --accent-green: #16a34a;
+  --accent-green-hover: #15803d;
+  --accent-green-light: rgba(22, 163, 74, 0.15);
+  
+  --accent-purple: #9333ea;
+  --accent-purple-hover: #7629c1;
+  --accent-purple-light: rgba(147, 51, 234, 0.15);
+  
+  --accent-yellow: #ca8a04;
+  --accent-yellow-hover: #a16207;
+  --accent-yellow-light: rgba(202, 138, 4, 0.15);
+  
+  --accent-red: #dc2626;
+  --accent-red-hover: #b91c1c;
+  --accent-red-light: rgba(220, 38, 38, 0.15);
+
+  /* Sombras Brutalistas */
+  --shadow-brutal: 4px 4px 0px #000000;
+  --shadow-brutal-hover: 8px 8px 0px #000000;
+  --shadow-brutal-blue: 4px 4px 0px var(--accent-blue);
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  
+  /* Bordes */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+/* 3. ESTILOS BASE Y RESETS */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #1f2937 0%, var(--bg-primary) 40%, #030712 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* 4. COMPONENTES Y UTILIDADES GLOBALES */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.neo-header {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 1.5rem; /* px-6 py-2.5 - matches SaaS exactly */
+  background-color: var(--bg-header);
+  color: var(--text-dark);
+  box-shadow: var(--shadow-brutal);
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  z-index: 10;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  user-select: none;
+}
+
+.neo-header a {
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+.neo-header nav ul {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  gap: 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .neo-header nav ul {
+    gap: 2rem;
+    font-size: 1.05rem;
+  }
+}
+
+.neo-header .btn {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.neo-header nav ul a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Botones Brutalistas */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-dark);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-brutal);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.btn-primary {
+  background-color: var(--accent-blue);
+  color: var(--text-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-blue-hover);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-hover);
+}
+
+.btn-primary:active {
+  transform: translate(0, 0);
+  box-shadow: var(--shadow-brutal);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+  background-color: #f3f4f6;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-hover);
+}
+
+.btn-secondary:active {
+  transform: translate(0, 0);
+  box-shadow: var(--shadow-brutal);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-primary);
+}
+
+/* Tarjetas Neo-Brutales */
+.card-neo {
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.75rem;
+  background: linear-gradient(135deg, #1b1e24 0%, #0e1115 100%);
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-premium);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-neo:hover {
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-brutal-blue);
+  transform: translateY(-4px);
+}
+
+.card-neo-blue { border-color: rgba(37, 99, 235, 0.4); }
+.card-neo-blue:hover { border-color: var(--accent-blue); box-shadow: 4px 4px 0px var(--accent-blue); }
+
+.card-neo-green { border-color: rgba(22, 163, 74, 0.4); }
+.card-neo-green:hover { border-color: var(--accent-green); box-shadow: 4px 4px 0px var(--accent-green); }
+
+.card-neo-purple { border-color: rgba(147, 51, 234, 0.4); }
+.card-neo-purple:hover { border-color: var(--accent-purple); box-shadow: 4px 4px 0px var(--accent-purple); }
+
+.card-neo-yellow { border-color: rgba(202, 138, 4, 0.4); }
+.card-neo-yellow:hover { border-color: var(--accent-yellow); box-shadow: 4px 4px 0px var(--accent-yellow); }
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border: 1px solid var(--border-dark);
+}
+
+.badge-blue { background-color: var(--accent-blue); color: #fff; }
+.badge-green { background-color: var(--accent-green); color: #fff; }
+.badge-purple { background-color: var(--accent-purple); color: #fff; }
+.badge-yellow { background-color: var(--accent-yellow); color: #fff; }
+.badge-red { background-color: var(--accent-red); color: #fff; }
+
+/* Grid Layout */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* 5. DISEÑOS ESPECÍFICOS Y ANIMACIONES */
+.text-gradient {
+  background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glow-logo {
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3));
+}
+
+/* Estilos para toggles de demo */
+.demo-toggle-btn {
+  background: #2563eb;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.demo-toggle-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000;
+}
+
+.demo-toggle-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0px #000;
+}
+
+.demo-box {
+  background-color: #080a0c;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-top: 1rem;
+  animation: slideDown 0.25s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ocultar menú en móvil por defecto */
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .neo-header {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* ==========================================
+   PRESENTATION & INTERACTIVE STYLES
+   ========================================== */
+
+/* 1. Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(21, 24, 30, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  box-shadow: 0 0 40px rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+/* 2. Micro-Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(37, 99, 235, 0.25)); }
+  50% { filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.55)); }
+}
+
+.animate-glow {
+  animation: pulse-glow 3s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+  100% { transform: scale(0.95); opacity: 1; }
+}
+
+.pulse-ring-dot {
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in {
+  animation: slide-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Before & After Comparer CSS */
+.before-box {
+  border-left: 4px solid var(--accent-red);
+  background: rgba(220, 38, 38, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  position: relative;
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  border-left: 4px solid var(--accent-red);
+}
+
+.after-box {
+  border-left: 4px solid var(--accent-green);
+  background: rgba(22, 163, 74, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  position: relative;
+  border: 1px solid rgba(22, 163, 74, 0.15);
+  border-left: 4px solid var(--accent-green);
+}
+
+.text-red-highlight {
+  color: #ff8a8a;
+  background-color: rgba(220, 38, 38, 0.25);
+  text-decoration: line-through;
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.text-green-highlight {
+  color: #a7f3d0;
+  background-color: rgba(22, 163, 74, 0.25);
+  font-weight: 600;
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.1rem;
+  border: 2px solid currentColor;
+}
+
+/* 4. Presentation Slide-Deck CSS */
+.deck-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 992px) {
+  .deck-container {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.deck-tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.deck-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .deck-tabs {
+    flex-direction: column;
+    width: 320px;
+    overflow-x: visible;
+    border-right: 2px solid var(--border-light);
+    padding-right: 1.5rem;
+    padding-bottom: 0;
+  }
+}
+
+.deck-tab-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  padding: 1.1rem 1.4rem;
+  font-family: var(--font-title);
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+@media (min-width: 992px) {
+  .deck-tab-btn {
+    white-space: normal;
+  }
+}
+
+.deck-tab-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+  background: var(--bg-card-hover);
+}
+
+.deck-tab-btn.active {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-brutal-blue);
+  transform: translate(-2px, -2px);
+}
+
+.deck-slide-view {
+  flex-grow: 1;
+  background: linear-gradient(135deg, #15181e 0%, #080a0e 100%);
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  position: relative;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: var(--shadow-premium);
+}
+
+.slide-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.slide-content.active {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  opacity: 1;
+  transform: translateY(0);
+  animation: slide-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 5. Dashboard Tour CSS */
+.db-tour-container {
+  background: #080a0e;
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 580px;
+  box-shadow: var(--shadow-premium);
+}
+
+.db-tour-topbar {
+  background: #11141b;
+  border-bottom: 2px solid var(--border-muted);
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.db-tour-body {
+  display: flex;
+  flex-grow: 1;
+  height: calc(100% - 54px);
+  overflow: hidden;
+}
+
+.db-tour-sidebar {
+  width: 220px;
+  background: #0c0e14;
+  border-right: 2px solid var(--border-muted);
+  padding: 1.5rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .db-tour-sidebar {
+    width: 64px;
+    padding: 1rem 0.5rem;
+    align-items: center;
+  }
+  .db-tour-nav-label {
+    display: none;
+  }
+}
+
+.db-tour-nav-item {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.db-tour-nav-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.db-tour-nav-item.active {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(37, 99, 235, 0.2);
+  border-left: 4px solid var(--accent-blue);
+}
+
+.db-tour-content {
+  flex-grow: 1;
+  padding: 1.75rem;
+  overflow-y: auto;
+  background: #07090c;
+}
+
+.db-tour-panel {
+  display: none;
+}
+
+.db-tour-panel.active {
+  display: block;
+  animation: slide-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 6. FAQ Accordion CSS */
+.faq-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.faq-item:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-card-hover);
+}
+
+.faq-question {
+  padding: 1.25rem 1.75rem;
+  font-family: var(--font-title);
+  font-weight: bold;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  font-size: 1.05rem;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s ease;
+  padding: 0 1.75rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.faq-item.active {
+  border-color: var(--accent-blue);
+}
+
+.faq-item.active .faq-answer {
+  max-height: 250px;
+  padding-bottom: 1.5rem;
+}
+
+.faq-arrow {
+  transition: transform 0.3s ease;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: bold;
+}
+
+.faq-item.active .faq-arrow {
+  transform: rotate(180deg);
+  color: var(--accent-blue);
+}
+

@@ -1,0 +1,992 @@
+---
+import '../styles/global.css';
+const mainAppUrl = import.meta.env.PUBLIC_APP_URL || 'http://localhost:3000';
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  
+  <!-- SEO Meta Tags -->
+  <title>OptimiSEO — Presentación Oficial y Analizador Inteligente de SEO con IA</title>
+  <meta name="description" content="Descubre OptimiSEO, la plataforma inteligente de SEO impulsada por IA avanzada. Analiza la legibilidad, evita keyword stuffing, optimiza títulos y genera metadatos premium." />
+  <meta name="keywords" content="SEO, IA, optimización SEO, legibilidad, keyword stuffing, clickbait, metadatos, Google Gemini, marketing digital" />
+  <meta name="author" content="Martin Adolfo Bravo Montaños" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://optimiseo.pro" />
+  <meta property="og:title" content="OptimiSEO — Copiloto Inteligente de Optimización SEO" />
+  <meta property="og:description" content="Presentamos OptimiSEO: Analiza, reescribe y optimiza tus artículos en segundos. Conoce todas las capacidades de nuestra IA con Grounding de búsqueda de Google." />
+  <meta property="og:image" content="/og-image.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content="OptimiSEO — Optimización SEO de Nueva Generación" />
+  <meta property="twitter:description" content="La herramienta definitiva para creadores y redactores SEO que buscan optimizar su contenido con Inteligencia Artificial humana y precisa." />
+  <meta property="twitter:image" content="/og-image.png" />
+</head>
+<body>
+
+  <!-- 1. HEADER FIXED (Neo-Brutalist Glass) -->
+  <div class="container" style="position: sticky; top: 0; z-index: 100;">
+    <header class="neo-header glass-panel" style="background: rgba(156, 163, 175, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: var(--radius-md); box-shadow: var(--shadow-brutal); margin-top: 1rem;">
+      <!-- Grupo Izquierdo: Logo + Separador -->
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <!-- Logo -->
+        <a href="#" class="glow-logo" style="display: flex; align-items: center; gap: 0.5rem;">
+          <img src="/name.png" alt="OptimiSEO Logo" style="height: 38px; display: block;" />
+        </a>
+
+        <!-- Separador Oculto en Móvil -->
+        <span class="hidden-mobile" style="font-weight: 200; opacity: 0.3; color: var(--text-dark);">|</span>
+      </div>
+
+      <!-- Navegación -->
+      <nav class="hidden-mobile">
+        <ul style="color: var(--text-dark);">
+          <li><a href="#deck-presentacion">Módulos</a></li>
+          <li><a href="#comparador-seo">Antes vs Después</a></li>
+          <li><a href="#tour-dashboard">El Dashboard</a></li>
+          <li><a href="#precios">Precios</a></li>
+          <li><a href="#faqs">Preguntas Frecuentes</a></li>
+        </ul>
+      </nav>
+
+      <!-- Grupo Derecho: Separador + Auth / Hamburguesa -->
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <!-- Separador Oculto en Móvil -->
+        <span class="hidden-mobile" style="font-weight: 200; opacity: 0.3; color: var(--text-dark); margin-right: 0.25rem;">|</span>
+
+        <!-- Auth Buttons -->
+        <div class="hidden-mobile" style="display: flex; gap: 1.25rem; font-weight: 700; align-items: center;">
+          <a href={`${mainAppUrl}/auth/register`} style="color: var(--text-dark); hover: underline;">Regístrate</a>
+          <a href={`${mainAppUrl}/auth/login`} class="btn btn-primary" style="box-shadow: 2px 2px 0px #000; padding: 0.45rem 1rem; font-size: 0.8rem; background-color: var(--accent-blue); color: #fff;">Acceder</a>
+        </div>
+
+        <!-- Hamburguesa Móvil -->
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-dark);">
+          ☰
+        </button>
+      </div>
+    </header>
+
+    <!-- Menú Móvil Desplegable -->
+    <div class="mobile-nav" id="mobile-nav" style="background-color: rgba(21, 24, 30, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 2px solid var(--border-muted); border-radius: var(--radius-md); box-shadow: var(--shadow-brutal-blue); margin-top: -0.5rem;">
+      <a href="#deck-presentacion" style="color: #fff;">Presentación de Módulos</a>
+      <a href="#comparador-seo" style="color: #fff;">Comparador SEO Antes vs Después</a>
+      <a href="#tour-dashboard" style="color: #fff;">Explorar el Dashboard</a>
+      <a href="#precios" style="color: #fff;">Planes y Tarifas</a>
+      <a href="#faqs" style="color: #fff;">Preguntas Frecuentes</a>
+      <hr style="border: 1px solid var(--border-light); width: 100%; margin: 0.5rem 0;" />
+      <div style="display: flex; gap: 1.5rem; justify-content: space-around; width: 100%; padding-top: 0.5rem;">
+        <a href={`${mainAppUrl}/auth/register`} style="color: #fff; font-weight: bold;">Regístrate</a>
+        <a href={`${mainAppUrl}/auth/login`} style="color: var(--accent-blue); font-weight: bold;">Iniciar sesión</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. HERO SECTION -->
+  <section class="hero-section container" style="padding-top: 4rem; padding-bottom: 5rem; text-align: center; position: relative;">
+    <!-- Decoración de fondo -->
+    <div style="position: absolute; top: -5%; left: 50%; transform: translateX(-50%); width: 80%; height: 60%; background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, rgba(147,51,234,0.03) 60%, transparent 100%); filter: blur(80px); z-index: -1;"></div>
+
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 1rem;">
+      <!-- Badge de Lanzamiento -->
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 9999px; padding: 0.4rem 1rem; margin-bottom: 1.75rem;">
+        <span class="pulse-ring-dot" style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-blue); display: inline-block;"></span>
+        <span style="font-family: var(--font-title); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; color: #93c5fd;">
+          Copiloto SEO de Última Generación
+        </span>
+      </div>
+
+      <!-- Título Principal -->
+      <h1 style="font-size: clamp(2.2rem, 6vw, 3.8rem); margin-bottom: 1.5rem; letter-spacing: -0.03em; font-family: var(--font-title); font-weight: 900; line-height: 1.1;">
+        La Inteligencia Artificial que optimiza tu SEO <span class="text-gradient animate-glow" style="display: inline-block;">sin sonar como un robot</span>
+      </h1>
+      
+      <!-- Subtítulo -->
+      <p style="font-size: clamp(1.05rem, 2.5vw, 1.3rem); color: var(--text-secondary); margin-bottom: 2.5rem; max-width: 750px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+        Audita la legibilidad, evita penalizaciones por keyword stuffing y crea descripciones de alta conversión. OptimiSEO utiliza IA avanzada conectada a Google Search en tiempo real para perfeccionar tu contenido preservando la calidez y el tacto humano.
+      </p>
+      
+      <!-- CTAs Hero -->
+      <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4.5rem;">
+        <a href={`${mainAppUrl}/auth/register`} class="btn btn-primary" style="font-size: 1rem; padding: 0.9rem 2rem;">
+          Comenzar Gratis 🚀
+        </a>
+        <a href="#deck-presentacion" class="btn btn-secondary" style="font-size: 1rem; padding: 0.9rem 2rem; background: var(--bg-card); color: #fff; border-color: var(--border-muted);">
+          Ver Presentación Interactiva 🪄
+        </a>
+      </div>
+    </div>
+
+    <!-- Floating Graphic: Presentación de Puntuación General -->
+    <div class="mockup-container animate-float" style="max-width: 600px; margin: 0 auto; position: relative; padding: 0 1rem;">
+      <div class="card-neo glass-panel glass-panel-glow" style="padding: 1.5rem 2rem; text-align: left; background: rgba(21, 24, 30, 0.8);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-red); display: inline-block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #ca8a04; display: inline-block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-green); display: inline-block;"></span>
+          </div>
+          <span style="font-family: var(--font-title); font-size: 0.7rem; font-weight: bold; color: var(--text-muted); letter-spacing: 0.05em;">
+            OPTIMISEO COGNITIVE REPORT
+          </span>
+        </div>
+
+        <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+          <div class="score-badge animate-glow" style="color: var(--accent-green); width: 68px; height: 68px; font-size: 1.7rem; flex-shrink: 0; background: rgba(22, 163, 74, 0.05);">
+            9.6
+          </div>
+          <div style="flex-grow: 1;">
+            <p style="font-family: var(--font-title); font-weight: bold; font-size: 1.1rem; color: #fff; margin-bottom: 0.25rem;">
+              ¡Contenido SEO Altamente Optimizado!
+            </p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              La coherencia temática es excelente, el lenguaje fluye con naturalidad y las palabras clave se integran semánticamente de forma segura.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PRESENTATION INTERACTIVE DECK (Módulos del Producto) -->
+  <section id="deck-presentacion" style="background-color: var(--bg-secondary); border-top: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light); padding: 6rem 0; position: relative;">
+    <div class="container">
+      
+      <!-- Encabezado Sección -->
+      <div style="text-align: center; max-width: 700px; margin: 0 auto 3.5rem auto;">
+        <span class="badge badge-blue" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.35rem 1rem;">Módulos Explicativos</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-title);">¿Cómo audita y reescribe OptimiSEO?</h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.5;">
+          Nuestra inteligencia artificial se divide en 4 potentes módulos especializados en marketing digital. Haz clic en las diapositivas para explorar su funcionamiento:
+        </p>
+      </div>
+
+      <!-- Presentador de Diapositivas (Deck) -->
+      <div class="deck-container">
+        
+        <!-- Pestañas Diapositiva (Controlador) -->
+        <div class="deck-tabs" id="deck-tabs">
+          <button class="deck-tab-btn active" data-slide="slide-readability">
+            <span style="font-size: 1.25rem;">📊</span>
+            <div style="text-align: left;">
+              <div style="color: #fff; font-size: 0.95rem;">Análisis de Legibilidad</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-top: 0.15rem;">Párrafos escaneables y fluidos</div>
+            </div>
+          </button>
+          
+          <button class="deck-tab-btn" data-slide="slide-density">
+            <span style="font-size: 1.25rem;">🔍</span>
+            <div style="text-align: left;">
+              <div style="color: #fff; font-size: 0.95rem;">Evitar Keyword Stuffing</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-top: 0.15rem;">Reemplazo semántico y sinónimos</div>
+            </div>
+          </button>
+          
+          <button class="deck-tab-btn" data-slide="slide-coherency">
+            <span style="font-size: 1.25rem;">✨</span>
+            <div style="text-align: left;">
+              <div style="color: #fff; font-size: 0.95rem;">Coherencia Título-Contenido</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-top: 0.15rem;">Protección contra penalizaciones</div>
+            </div>
+          </button>
+          
+          <button class="deck-tab-btn" data-slide="slide-meta">
+            <span style="font-size: 1.25rem;">📝</span>
+            <div style="text-align: left;">
+              <div style="color: #fff; font-size: 0.95rem;">Metadatos y Alt Text</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-top: 0.15rem;">Maximizar el CTR en Google</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Diapositivas Contenido (Visor) -->
+        <div class="deck-slide-view">
+          
+          <!-- DIAPOSITIVA 1: Legibilidad -->
+          <div class="slide-content active" id="slide-readability">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="badge badge-blue">Módulo 1</span>
+              <h3 style="font-size: 1.5rem; font-family: var(--font-title); color: #fff;">Evaluación de Legibilidad Estructurada</h3>
+            </div>
+            
+            <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6;">
+              Los textos excesivamente largos o complejos agotan al visitante, especialmente en dispositivos móviles, lo que aumenta la tasa de rebote y daña tu SEO. OptimiSEO audita la estructura mediante fórmulas lingüísticas avanzadas e identifica los bloques críticos.
+            </p>
+            
+            <div class="grid-2" style="gap: 1.5rem; margin-top: 1rem;">
+              <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); border-color: rgba(37, 99, 235, 0.15);">
+                <p style="font-family: var(--font-title); font-size: 0.75rem; font-weight: bold; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.05em;">Indicadores Lingüísticos Analizados</p>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.9rem; color: var(--text-secondary);">
+                  <li style="display: flex; gap: 0.5rem;"><span style="color: var(--accent-blue);">✦</span> Longitud promedio de oraciones</li>
+                  <li style="display: flex; gap: 0.5rem;"><span style="color: var(--accent-blue);">✦</span> Detección de bloques de más de 150 palabras</li>
+                  <li style="display: flex; gap: 0.5rem;"><span style="color: var(--accent-blue);">✦</span> Densidad de conectores conceptuales</li>
+                  <li style="display: flex; gap: 0.5rem;"><span style="color: var(--accent-blue);">✦</span> Estructuración de H2 y H3 para dar aire al lector</li>
+                </ul>
+              </div>
+
+              <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: center; text-align: center;">
+                <div style="font-size: 2.2rem; font-family: var(--font-title); font-weight: 900; color: #fff; line-height: 1;">
+                  78.5 <span style="font-size: 1rem; color: var(--accent-green); font-weight: bold;">/ 100</span>
+                </div>
+                <p style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-secondary); margin-top: 0.5rem; letter-spacing: 0.05em; font-family: var(--font-title);">Índice Flesch-Szigriszt (Fácil)</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4;">
+                  El texto se lee de manera ágil y fluida. Ideal para retener audiencias y complacer los algoritmos modernos de Google.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIAPOSITIVA 2: Keyword Stuffing -->
+          <div class="slide-content" id="slide-density">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="badge badge-green">Módulo 2</span>
+              <h3 style="font-size: 1.5rem; font-family: var(--font-title); color: #fff;">Control de Densidad & Detección de Keyword Stuffing</h3>
+            </div>
+            
+            <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6;">
+              Repetir forzadamente una palabra clave para intentar engañar a los buscadores ya no funciona; al contrario, es penalizado severamente bajo las directrices del contenido útil. OptimiSEO detecta excesos y redacta alternativas lógicas utilizando enriquecimiento conceptual.
+            </p>
+
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: var(--radius-md); margin-top: 1rem; border-color: rgba(22, 163, 74, 0.15);">
+              <p style="font-family: var(--font-title); font-size: 0.75rem; font-weight: bold; color: var(--accent-green); text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.05em;">Ejemplo de Reemplazo Semántico Natural</p>
+              
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="before-box" style="padding: 0.75rem 1rem;">
+                  <p style="font-size: 0.85rem; line-height: 1.5; color: #fff;">
+                    "En nuestro taller ofrecemos el mejor <span class="text-red-highlight">servicio técnico</span>. Si buscas un <span class="text-red-highlight">servicio técnico</span> rápido, este es tu <span class="text-red-highlight">servicio técnico</span>."
+                  </p>
+                  <span style="font-size: 0.7rem; color: var(--accent-red); font-weight: bold; display: block; margin-top: 0.25rem;">⚠️ Densidad excesiva: 9.8%</span>
+                </div>
+                
+                <div class="after-box" style="padding: 0.75rem 1rem;">
+                  <p style="font-size: 0.85rem; line-height: 1.5; color: #fff;">
+                    "En nuestro taller ofrecemos el mejor <span class="text-green-highlight">soporte profesional</span>. Si buscas una <span class="text-green-highlight">asistencia especializada</span> rápida, este es tu <span class="text-green-highlight">centro de reparaciones</span>."
+                  </p>
+                  <span style="font-size: 0.7rem; color: var(--accent-green); font-weight: bold; display: block; margin-top: 0.25rem;">✓ Densidad optimizada y fluida: 1.9%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIAPOSITIVA 3: Coherencia Título-Contenido -->
+          <div class="slide-content" id="slide-coherency">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="badge badge-purple">Módulo 3</span>
+              <h3 style="font-size: 1.5rem; font-family: var(--font-title); color: #fff;">Auditoría de Consistencia Título-Contenido</h3>
+            </div>
+            
+            <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6;">
+              ¿Tus títulos son clickbait descarado? Google devalúa los enlaces que prometen más de lo que ofrecen en sus páginas. Nuestra IA evalúa la distancia semántica entre el encabezado principal (H1) y el contenido del artículo para asegurar la máxima concordancia temática.
+            </p>
+
+            <div class="grid-2" style="gap: 1.5rem; margin-top: 1rem;">
+              <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); border-color: rgba(147, 51, 234, 0.15); display: flex; flex-direction: column; justify-content: center;">
+                <p style="font-family: var(--font-title); font-size: 0.75rem; font-weight: bold; color: var(--accent-purple); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em;">¿Cómo se calcula?</p>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                  Mapeamos los conceptos clave y la estructura argumental del artículo y la comparamos vectorialmente contra la promesa establecida en el título, calculando un porcentaje preciso de concordancia.
+                </p>
+              </div>
+
+              <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <p style="font-size: 0.75rem; font-weight: bold; color: var(--accent-red); text-transform: uppercase; margin-bottom: 0.25rem;">Título Incoherente</p>
+                  <p style="font-size: 0.85rem; color: #fff; font-family: var(--font-title); text-decoration: line-through;">"Los trucos para ser millonario con tu web"</p>
+                </div>
+                <div style="border-top: 1px solid var(--border-light); padding-top: 0.5rem; margin-top: 0.5rem;">
+                  <p style="font-size: 0.75rem; font-weight: bold; color: var(--accent-green); text-transform: uppercase; margin-bottom: 0.25rem;">Alternativa Optimizada IA</p>
+                  <p style="font-size: 0.85rem; color: #fff; font-family: var(--font-title); font-weight: bold;">"Guía completa de monetización y SEO para blogs"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIAPOSITIVA 4: Metadatos y Alt Text -->
+          <div class="slide-content" id="slide-meta">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="badge badge-yellow">Módulo 4</span>
+              <h3 style="font-size: 1.5rem; font-family: var(--font-title); color: #fff;">Optimización Inteligente de Metadatos y Alt Text</h3>
+            </div>
+            
+            <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6;">
+              Los buscadores muestran fragmentos limitados de contenido. Si tu meta descripción es demasiado larga, saldrá cortada, y si es aburrida, nadie hará clic. OptimiSEO genera descripciones cautivadoras que se ajustan estrictamente al límite de longitud recomendado.
+            </p>
+
+            <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); border-color: rgba(202, 138, 4, 0.15); margin-top: 1rem;">
+              <div style="background-color: #0c0e12; border: 1px solid var(--border-muted); border-radius: 6px; padding: 1rem; font-family: var(--font-sans);">
+                <div style="color: #60a5fa; font-size: 0.8rem; margin-bottom: 0.25rem;">https://optimiseo.pro › blog › tecnicas-seo</div>
+                <div style="color: #1e88e5; font-size: 1.15rem; font-weight: bold; margin-bottom: 0.25rem; cursor: pointer; hover: underline;">
+                  15 Técnicas SEO Probadas para Triplicar tu Tráfico Orgánico
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">
+                  Descubre las mejores estrategias SEO on-page y off-page respaldadas por datos. Incluye plantillas descargables y auditoría gratuita en segundos. ¡Entra ya!
+                </p>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); margin-top: 0.75rem; padding-top: 0.5rem; font-size: 0.7rem; color: var(--text-muted); font-weight: bold;">
+                  <span>✓ 142 caracteres (Perfecto para Google)</span>
+                  <span>CTR Estimado: Alto</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. COMPARADOR INTERACTIVO "ANTES VS DESPUÉS" -->
+  <section id="comparador-seo" style="padding: 6rem 0; position: relative;">
+    <div class="container" style="max-width: 900px;">
+      
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <span class="badge badge-green" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.35rem 1rem;">Demostración Visual</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-title);">Observa la transformación en tiempo real</h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">
+          Haz clic en el botón de simulación y mira cómo nuestra herramienta audita, estructura y limpia la densidad semántica de un borrador descuidado.
+        </p>
+      </div>
+
+      <!-- Caja Comparadora Principal -->
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <div class="grid-2" style="gap: 2rem;">
+          
+          <!-- Caja "Antes" -->
+          <div class="card-neo" style="border-color: rgba(220, 38, 38, 0.3); background: rgba(21, 24, 30, 0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+              <span style="font-family: var(--font-title); font-weight: bold; color: var(--accent-red); font-size: 0.85rem; text-transform: uppercase;">1. Borrador Original</span>
+              <div class="score-badge" id="original-score" style="color: var(--accent-red); background: rgba(220, 38, 38, 0.05);">4.2</div>
+            </div>
+
+            <p style="font-size: 0.9rem; line-height: 1.6; color: var(--text-secondary); font-family: var(--font-sans);">
+              Escribir un buen <span class="text-red-highlight">articulo seo</span> requiere conocer muchas reglas de <span class="text-red-highlight">articulo seo</span>. Cuando publicas un <span class="text-red-highlight">articulo seo</span>, los motores de búsqueda analizan las keywords de ese <span class="text-red-highlight">articulo seo</span> repetidamente. Es por eso que debes enfocar tu redacción de <span class="text-red-highlight">articulo seo</span> solo en repetir palabras claves y meta tags para mejorar el CTR sin importar el valor de tus textos o la retención de usuarios que visiten la web.
+            </p>
+
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Keyword stuffing detectado:</span>
+                <span style="color: var(--accent-red); font-weight: bold;">"articulo seo" (5 veces)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Densidad:</span>
+                <span style="color: var(--accent-red); font-weight: bold;">7.4% (Crítico)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Legibilidad:</span>
+                <span style="color: var(--accent-red); font-weight: bold;">Baja (Párrafo denso)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caja "Después" -->
+          <div class="card-neo" style="border-color: rgba(22, 163, 74, 0.3); background: rgba(21, 24, 30, 0.8);" id="optimized-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+              <span style="font-family: var(--font-title); font-weight: bold; color: var(--accent-green); font-size: 0.85rem; text-transform: uppercase;">2. Optimizado con OptimiSEO</span>
+              <div class="score-badge" id="optimized-score" style="color: var(--text-muted); background: rgba(255, 255, 255, 0.02);">--</div>
+            </div>
+
+            <p style="font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); font-family: var(--font-sans); transition: color 0.5s ease;" id="optimized-text">
+              Haz clic en el botón inferior para simular el análisis semántico y la reescritura optimizada del artículo en tiempo real...
+            </p>
+
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Densidad de palabras clave:</span>
+                <span id="stat-density" style="font-weight: bold;">--</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Sugerencias semánticas:</span>
+                <span id="stat-synonyms" style="font-weight: bold;">--</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Conectores naturales:</span>
+                <span id="stat-readability" style="font-weight: bold;">--</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botón de Acción Comparador -->
+        <button class="btn btn-primary" id="btn-simulate-seo" style="width: 100%; max-width: 400px; margin: 0 auto; padding: 1rem 2rem; font-size: 1rem;">
+          Simular Optimización en Vivo 🪄
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 5. TOUR DEL DASHBOARD REAL (Showcase de la Interfaz Next.js) -->
+  <section id="tour-dashboard" style="background-color: var(--bg-secondary); border-top: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light); padding: 6rem 0;">
+    <div class="container">
+      
+      <div style="text-align: center; max-width: 700px; margin: 0 auto 4.5rem auto;">
+        <span class="badge badge-purple" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.35rem 1rem;">Visita el Interior</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-title);">Una mirada al cockpit del editor</h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.5;">
+          El producto ya está construido y esperándote. Explora a continuación las pestañas interactivas de nuestro panel real integrado con Supabase y Stripe.
+        </p>
+      </div>
+
+      <!-- Simulador del Dashboard -->
+      <div class="db-tour-container">
+        
+        <!-- Barra de título de la ventana -->
+        <div class="db-tour-topbar">
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-red); display: inline-block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #ca8a04; display: inline-block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-green); display: inline-block;"></span>
+          </div>
+          <div style="font-family: var(--font-title); font-size: 0.75rem; color: var(--text-secondary); font-weight: bold; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem;">
+            <span>●</span> dashboard.optimiseo.pro/cockpit
+          </div>
+          <span class="hidden-mobile" style="font-size: 0.75rem; color: var(--accent-blue); font-weight: bold;">Gemini Engine Active</span>
+        </div>
+
+        <div class="db-tour-body">
+          
+          <!-- Sidebar del Simulador -->
+          <div class="db-tour-sidebar">
+            <div class="db-tour-nav-item active" data-panel="panel-cockpit">
+              <span>📊</span>
+              <span class="db-tour-nav-label">Cockpit de Análisis</span>
+            </div>
+            
+            <div class="db-tour-nav-item" data-panel="panel-metrics">
+              <span>📈</span>
+              <span class="db-tour-nav-label">Monitorización</span>
+            </div>
+            
+            <div class="db-tour-nav-item" data-panel="panel-history">
+              <span>🕒</span>
+              <span class="db-tour-nav-label">Historial de Supabase</span>
+            </div>
+            
+            <div class="db-tour-nav-item" data-panel="panel-stripe">
+              <span>💎</span>
+              <span class="db-tour-nav-label">Mi Suscripción</span>
+            </div>
+          </div>
+
+          <!-- Ventana de Contenidos del Simulador -->
+          <div class="db-tour-content">
+            
+            <!-- PANEL 1: COCKPIT -->
+            <div class="db-tour-panel active" id="panel-cockpit">
+              <h4 style="font-family: var(--font-title); font-size: 1.15rem; color: #fff; margin-bottom: 0.75rem;">Módulo de Análisis Principal</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                El centro neurálgico desde donde optimizas tus publicaciones. Puedes extraer contenido pegando directamente una URL externa o escribiendo directamente en nuestro editor.
+              </p>
+
+              <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); border-color: var(--border-muted);">
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                  <div>
+                    <label style="display: block; font-size: 0.65rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem;">URL de tu Artículo</label>
+                    <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); border-radius: 4px; padding: 0.5rem; font-size: 0.8rem; color: var(--text-secondary);">
+                      https://mi-web.com/consejos-seo-marketing
+                    </div>
+                  </div>
+                  <div class="grid-2" style="gap: 1rem;">
+                    <div>
+                      <label style="display: block; font-size: 0.65rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem;">Módulo de Optimización</label>
+                      <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); border-radius: 4px; padding: 0.5rem; font-size: 0.8rem; color: #fff; font-weight: bold;">
+                        Densidad & Keyword Stuffing
+                      </div>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.65rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem;">Palabra Clave Objetivo</label>
+                      <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); border-radius: 4px; padding: 0.5rem; font-size: 0.8rem; color: #fff;">
+                        marketing digital
+                      </div>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.6rem 1rem; width: 100%; box-shadow: none;" onclick="alert('¡Inicia sesión o regístrate en la aplicación principal para utilizar el analizador cognitivo en tiempo real!')">
+                    Analizar con Gemini 3.5 Flash 🚀
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 2: METRICS / MONITORIZACIÓN -->
+            <div class="db-tour-panel" id="panel-metrics">
+              <h4 style="font-family: var(--font-title); font-size: 1.15rem; color: #fff; margin-bottom: 0.75rem;">Panel de Monitorización y Gráficas de Calidad</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Visualiza la evolución del SEO y legibilidad de tus contenidos a lo largo del tiempo. Mantén un registro dinámico para evaluar la calidad promedio antes de publicar en tu blog.
+              </p>
+
+              <!-- Gráfico Ficticio en CSS -->
+              <div class="glass-panel" style="padding: 1rem; border-radius: var(--radius-md); border-color: var(--border-muted); text-align: center;">
+                <p style="font-size: 0.75rem; font-weight: bold; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 1rem; font-family: var(--font-title);">Calidad SEO Media de tus Artículos (Últimos 30 días)</p>
+                <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 120px; padding: 0 1rem; margin-bottom: 0.5rem;">
+                  <div style="width: 10%; background: var(--border-light); height: 42px; border-radius: 2px;" title="4.2 Score"></div>
+                  <div style="width: 10%; background: var(--border-light); height: 45px; border-radius: 2px;"></div>
+                  <div style="width: 10%; background: var(--accent-blue-hover); height: 68px; border-radius: 2px;" title="6.8 Score"></div>
+                  <div style="width: 10%; background: var(--accent-blue-hover); height: 72px; border-radius: 2px;"></div>
+                  <div style="width: 10%; background: var(--accent-blue); height: 85px; border-radius: 2px;" title="8.5 Score"></div>
+                  <div style="width: 10%; background: var(--accent-blue); height: 96px; border-radius: 2px;" title="9.6 Score"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-title); font-weight: bold;">
+                  <span>Semana 1</span>
+                  <span>Semana 2</span>
+                  <span>Semana 3</span>
+                  <span>Semana 4</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 3: HISTORY / SUPABASE -->
+            <div class="db-tour-panel" id="panel-history">
+              <h4 style="font-family: var(--font-title); font-size: 1.15rem; color: #fff; margin-bottom: 0.75rem;">Historial Guardado en Supabase</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Tus análisis no se pierden en el limbo. Almacenamos el historial completo para que puedas comparar versiones previas y exportar los reportes en cualquier momento.
+              </p>
+
+              <div class="glass-panel" style="border-radius: var(--radius-md); border-color: var(--border-muted); overflow: hidden;">
+                <div style="display: flex; flex-direction: column; font-size: 0.75rem;">
+                  <div style="background-color: rgba(255, 255, 255, 0.03); padding: 0.6rem 1rem; font-weight: bold; color: #fff; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light);">
+                    <span>Artículo Analizado</span>
+                    <span>Puntuación</span>
+                  </div>
+                  <div style="padding: 0.6rem 1rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; color: var(--text-secondary);">
+                    <span>/blog/consejos-seo-marketing</span>
+                    <span style="color: var(--accent-green); font-weight: bold;">9.6</span>
+                  </div>
+                  <div style="padding: 0.6rem 1rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; color: var(--text-secondary);">
+                    <span>/blog/guia-html-basica</span>
+                    <span style="color: var(--accent-green); font-weight: bold;">8.5</span>
+                  </div>
+                  <div style="padding: 0.6rem 1rem; display: flex; justify-content: space-between; color: var(--text-secondary);">
+                    <span>/productos/soporte-tecnico</span>
+                    <span style="color: var(--accent-red); font-weight: bold;">4.2</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 4: STRIPE SUBSCRIPTION -->
+            <div class="db-tour-panel" id="panel-stripe">
+              <h4 style="font-family: var(--font-title); font-size: 1.15rem; color: #fff; margin-bottom: 0.75rem;">Integración Segura con Stripe y Límites</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Administra tu plan de suscripción de forma rápida y transparente. Stripe procesa los pagos de manera encriptada para actualizar tu estado de cuenta de forma inmediata.
+              </p>
+
+              <div class="glass-panel" style="padding: 1.25rem; border-radius: var(--radius-md); border-color: rgba(37, 99, 235, 0.2); display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div style="font-family: var(--font-title); font-weight: bold; color: #fff; font-size: 0.95rem;">Plan Pro Activo</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Facturado mensualmente a través de Stripe</div>
+                  </div>
+                  <span class="badge badge-blue">Suscrito</span>
+                </div>
+                
+                <!-- Barra de Límites -->
+                <div style="margin-top: 0.5rem;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.25rem; font-weight: bold;">
+                    <span>Límite de solicitudes diarias</span>
+                    <span style="color: #fff;">18 / 100</span>
+                  </div>
+                  <div style="background-color: var(--border-light); height: 6px; border-radius: 3px; overflow: hidden;">
+                    <div style="background-color: var(--accent-blue); width: 18%; height: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. SECCIÓN DE PRECIOS -->
+  <section id="precios" style="padding: 6rem 0; position: relative;">
+    <div class="container">
+      
+      <div style="text-align: center; max-width: 600px; margin: 0 auto 4.5rem auto;">
+        <span class="badge badge-yellow" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.35rem 1rem;">Nuestras tarifas</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-title);">Planes sencillos, sin sorpresas</h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Selecciona la tarifa que mejor se adapte a tu ritmo de producción editorial:</p>
+      </div>
+
+      <div class="grid-2" style="max-width: 850px; margin: 0 auto; gap: 3rem; align-items: stretch;">
+        
+        <!-- Plan FREE -->
+        <div class="card-neo" style="display: flex; flex-direction: column; justify-content: space-between; background: rgba(21, 24, 30, 0.4);">
+          <div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-family: var(--font-title);">Free</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem;">Para blogs personales y creadores que empiezan.</p>
+            
+            <p style="font-size: 2.5rem; font-family: var(--font-title); font-weight: 900; margin-bottom: 2rem; color: #fff;">
+              0€ <span style="font-size: 1.1rem; font-family: var(--font-sans); color: var(--text-secondary); font-weight: normal;">/ mes</span>
+            </p>
+
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2.5rem;">
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-green); font-weight: bold;">✓</span> 5 análisis de contenido web diarios
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-green); font-weight: bold;">✓</span> Acceso a los 4 módulos de IA
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-green); font-weight: bold;">✓</span> Diagnósticos y recomendaciones básicas
+              </li>
+            </ul>
+          </div>
+
+          <a href={`${mainAppUrl}/auth/register`} class="btn btn-ghost" style="width: 100%; text-align: center; border-color: var(--border-muted);">
+            Comenzar Gratis
+          </a>
+        </div>
+
+        <!-- Plan PRO (Destacado) -->
+        <div class="card-neo" style="display: flex; flex-direction: column; justify-content: space-between; border-color: var(--accent-blue); box-shadow: var(--shadow-brutal-blue); background: linear-gradient(135deg, #10141d 0%, #06090e 100%); transform: scale(1.03);">
+          <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+            <span class="badge badge-blue">Recomendado</span>
+          </div>
+
+          <div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-family: var(--font-title); color: #fff;">Pro</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem;">Para redactores profesionales, agencias y eCommerce.</p>
+            
+            <p style="font-size: 2.5rem; font-family: var(--font-title); font-weight: 900; margin-bottom: 2rem; color: #fff;">
+              12€ <span style="font-size: 1.1rem; font-family: var(--font-sans); color: var(--text-secondary); font-weight: normal;">/ mes</span>
+            </p>
+
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2.5rem;">
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-blue); font-weight: bold;">✓</span> 100 auditorías detalladas cada día
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-blue); font-weight: bold;">✓</span> Historial en Supabase sin límite temporal
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-blue); font-weight: bold;">✓</span> Comparador histórico de versiones SEO
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-blue); font-weight: bold;">✓</span> Panel completo de gráficas de evolución
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-blue); font-weight: bold;">✓</span> Soporte premium y acceso a análisis por lotes
+              </li>
+            </ul>
+          </div>
+
+          <a href={`${mainAppUrl}/auth/register`} class="btn btn-primary" style="width: 100%; text-align: center;">
+            Mejorar a Pro 💎
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. PREGUNTAS FRECUENTES (FAQs Accordion) -->
+  <section id="faqs" style="background-color: var(--bg-secondary); border-top: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light); padding: 6rem 0;">
+    <div class="container">
+      
+      <div style="text-align: center; max-width: 600px; margin: 0 auto 4rem auto;">
+        <span class="badge badge-purple" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.35rem 1rem;">Resolviendo Dudas</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-title);">Preguntas Frecuentes</h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Todo lo que necesitas saber antes de empezar a optimizar:</p>
+      </div>
+
+      <div class="faq-accordion">
+        
+        <!-- FAQ 1 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Cómo funciona el motor de Inteligencia Artificial con Grounding de búsqueda?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p>
+              OptimiSEO integra las capacidades lingüísticas avanzadas de Google Gemini 3.5 Flash junto con el mecanismo de Google Search Grounding. Esto significa que la IA no se limita a usar su conocimiento estático, sino que realiza búsquedas de validación en tiempo real para verificar información, comprobar coherencia conceptual y ofrecer sugerencias SEO actualizadas a las últimas tendencias en los buscadores.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Es seguro mi contenido? ¿Quién tiene acceso a mis datos?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p>
+              La seguridad de tus borradores y URLs es nuestra máxima prioridad. La plataforma utiliza un sistema de autenticación seguro administrado por Supabase, con contraseñas fuertemente encriptadas y autenticación opcional de dos factores (2FA). Tus textos analizados e historial se guardan en contenedores privados en tu perfil, y nunca compartimos ni entrenamos modelos de IA externos con tu contenido protegido.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Qué limitaciones reales tiene el plan Free?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p>
+              El plan Free está diseñado para creadores de contenido independientes y blogs pequeños. Te permite realizar hasta 5 análisis completos al día en cualquiera de los 4 módulos cognitivos. Si eres una agencia, redactas volumen de artículos diario o necesitas monitorización histórica de calidad junto con soporte de comparador de versiones, te recomendamos actualizar a la tarifa Pro (12€/mes) gestionada mediante Stripe de forma instantánea.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Se puede integrar con mi blog de WordPress u otros CMS?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p>
+              ¡Por supuesto! OptimiSEO cuenta con un módulo analizador de URLs mediante web scraping inteligente. Puedes pegar directamente la dirección pública de tus borradores o artículos publicados en tu CMS (WordPress, Shopify, Webflow, Medium, etc.). La herramienta extraerá el texto limpio, evaluará sus metadatos y te entregará las recomendaciones listas para copiar y pegar de vuelta en tu editor.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. SOCIAL PROOF & STATS -->
+  <section style="padding: 5rem 0;">
+    <div class="container text-center" style="text-align: center;">
+      <h3 style="font-family: var(--font-title); font-size: 3.5rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -0.02em;">
+        +18,485
+      </h3>
+      <p style="color: var(--text-secondary); font-size: 1.15rem; margin-top: 0.5rem; letter-spacing: 0.05em; font-family: var(--font-title); font-weight: bold;">
+        ANÁLISIS COGNITIVOS COMPLETADOS CON ÉXITO
+      </p>
+    </div>
+  </section>
+
+  <!-- 9. FOOTER -->
+  <footer style="background-color: #030406; border-top: 2px solid #000; padding: 4.5rem 0; color: var(--text-secondary); font-size: 0.95rem; position: relative;">
+    <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 70%; height: 50%; background: radial-gradient(circle, rgba(147,51,234,0.04) 0%, transparent 80%); filter: blur(50px); z-index: 1;"></div>
+    
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; text-align: center; position: relative; z-index: 2;">
+      <img src="/name.png" alt="OptimiSEO Logo" style="height: 32px; opacity: 0.95;" />
+      
+      <p style="color: var(--text-muted); max-width: 600px; line-height: 1.6;">
+        OptimiSEO es tu copiloto inteligente de posicionamiento web optimizado mediante inteligencia artificial de vanguardia. Diseñado para redactores que priorizan la fluidez y calidad de lectura humana.
+      </p>
+      
+      <div style="display: flex; gap: 1.5rem; font-weight: bold; flex-wrap: wrap; justify-content: center;">
+        <a href="#deck-presentacion" style="color: var(--text-muted); hover: color: #fff;">Características</a>
+        <a href="#precios" style="color: var(--text-muted); hover: color: #fff;">Planes</a>
+        <a href="#faqs" style="color: var(--text-muted); hover: color: #fff;">FAQs</a>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 400px; padding-top: 1.5rem;">
+        &copy; 2026 OptimiSEO. Todos los derechos reservados.
+      </p>
+
+      <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: -0.5rem;">
+        Desarrollado con ❤️ por <a href="https://github.com/Martin08ABM" target="_blank" style="color: #fff; text-decoration: underline;">Martin Adolfo Bravo Montaños</a> con soporte de IA avanzada.
+      </p>
+    </div>
+  </footer>
+
+  <!-- CLIENT-SIDE SCRIPT: INTERACTVIDAD Y RESPONSIVIDAD -->
+  <script>
+    // 1. Menú Responsive Móvil
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    if (mobileMenuBtn && mobileNav) {
+      function checkWidth() {
+        if (window.innerWidth <= 768) {
+          mobileMenuBtn.style.display = 'block';
+        } else {
+          mobileMenuBtn.style.display = 'none';
+          mobileNav.style.display = 'none';
+          mobileMenuBtn.textContent = '☰';
+        }
+      }
+
+      window.addEventListener('resize', checkWidth);
+      checkWidth();
+
+      mobileMenuBtn.addEventListener('click', () => {
+        if (mobileNav.style.display === 'flex') {
+          mobileNav.style.display = 'none';
+          mobileMenuBtn.textContent = '☰';
+        } else {
+          mobileNav.style.display = 'flex';
+          mobileNav.style.flexDirection = 'column';
+          mobileNav.style.gap = '1.25rem';
+          mobileNav.style.padding = '1.25rem';
+          mobileMenuBtn.textContent = '✕';
+        }
+      });
+
+      // Cerrar menú móvil al hacer clic en un enlace
+      mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileNav.style.display = 'none';
+          mobileMenuBtn.textContent = '☰';
+        });
+      });
+    }
+
+    // 2. Interacciones del Presentation Deck (Slides)
+    const tabContainer = document.getElementById('deck-tabs');
+    if (tabContainer) {
+      const tabButtons = tabContainer.querySelectorAll('.deck-tab-btn');
+      
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Desactivar botones anteriores
+          tabButtons.forEach(b => b.classList.remove('active'));
+          // Activar este botón
+          btn.classList.add('active');
+
+          // Ocultar slides anteriores
+          const targetId = btn.getAttribute('data-slide');
+          const targetSlide = document.getElementById(targetId);
+          
+          if (targetSlide) {
+            const allSlides = document.querySelectorAll('.slide-content');
+            allSlides.forEach(slide => slide.classList.remove('active'));
+            // Mostrar slide actual
+            targetSlide.classList.add('active');
+          }
+        });
+      });
+    }
+
+    // 3. Simulación de Optimización de SEO ("Antes vs Después")
+    const btnSimulate = document.getElementById('btn-simulate-seo');
+    const originalScore = document.getElementById('original-score');
+    const optimizedScore = document.getElementById('optimized-score');
+    const optimizedText = document.getElementById('optimized-text');
+    const optimizedCard = document.getElementById('optimized-card');
+    
+    const statDensity = document.getElementById('stat-density');
+    const statSynonyms = document.getElementById('stat-synonyms');
+    const statReadability = document.getElementById('stat-readability');
+
+    if (btnSimulate && optimizedScore && optimizedText && optimizedCard) {
+      btnSimulate.addEventListener('click', () => {
+        btnSimulate.disabled = true;
+        btnSimulate.textContent = 'Optimizando con Gemini... 🪄';
+        optimizedCard.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        
+        let counter = 0;
+        let score = 4.2;
+        
+        // Efecto incremento de Score
+        const interval = setInterval(() => {
+          score += 0.3;
+          if (score >= 9.6) {
+            score = 9.6;
+            clearInterval(interval);
+            
+            // Reescritura final
+            optimizedText.innerHTML = `Escribir un buen <span class="text-green-highlight">artículo optimizado</span> requiere conocer directrices de <span class="text-green-highlight">posicionamiento natural</span>. Cuando publicas tu <span class="text-green-highlight">contenido web</span>, los buscadores analizan la semántica de esa <span class="text-green-highlight">publicación</span> en tiempo real. Es por eso que debes enfocar tu redacción en <span class="text-green-highlight">integrar sinónimos ricos</span> para mejorar la legibilidad, multiplicando el tráfico orgánico y garantizando una excelente retención de usuarios.`;
+            optimizedText.style.color = '#fff';
+            optimizedScore.textContent = '9.6';
+            optimizedScore.style.color = 'var(--accent-green)';
+            optimizedScore.style.background = 'rgba(22, 163, 74, 0.05)';
+            optimizedCard.style.borderColor = 'var(--accent-green)';
+            optimizedCard.style.boxShadow = '0 0 30px rgba(22, 163, 74, 0.15)';
+            
+            statDensity.textContent = '1.9% (Natural)';
+            statDensity.style.color = 'var(--accent-green)';
+            statSynonyms.textContent = '4 recomendados';
+            statSynonyms.style.color = 'var(--accent-green)';
+            statReadability.textContent = 'Excelente (Escaneable)';
+            statReadability.style.color = 'var(--accent-green)';
+            
+            btnSimulate.textContent = '¡Optimización Completada! ✓';
+            btnSimulate.style.backgroundColor = 'var(--accent-green)';
+            btnSimulate.style.borderColor = 'var(--border-dark)';
+          } else {
+            optimizedScore.textContent = score.toFixed(1);
+          }
+        }, 60);
+      });
+    }
+
+    // 4. Tour del Dashboard Real
+    const dbTourSidebar = document.querySelector('.db-tour-sidebar');
+    if (dbTourSidebar) {
+      const tourItems = dbTourSidebar.querySelectorAll('.db-tour-nav-item');
+      tourItems.forEach(item => {
+        item.addEventListener('click', () => {
+          tourItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+
+          const panelId = item.getAttribute('data-panel');
+          const activePanel = document.getElementById(panelId);
+          
+          if (activePanel) {
+            const allPanels = document.querySelectorAll('.db-tour-panel');
+            allPanels.forEach(p => p.classList.remove('active'));
+            activePanel.classList.add('active');
+          }
+        });
+      });
+    }
+
+    // 5. Acordeón FAQs (Apertura suave sin plugins externos)
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        
+        // Cerrar todos los acordeones
+        faqItems.forEach(i => {
+          i.classList.remove('active');
+        });
+
+        // Si el click no era en uno ya activo, abrirlo
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
+
+  <style>
+    /* Estilos Adicionales Scoped para la Landing */
+    
+    .mobile-nav {
+      display: none;
+      z-index: 99;
+      margin-top: 0.5rem;
+      position: absolute;
+      left: 1.5rem;
+      right: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    .mobile-nav a {
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 0.5rem 0;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .mobile-nav a:hover {
+      color: var(--accent-blue) !important;
+    }
+  </style>
+
+</body>
+</html>

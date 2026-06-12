@@ -2,18 +2,25 @@
 
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
-export type UserRole = "normal";
+export type UserRole = "normal" | "free" | "pro";
 
 export async function getUserRole(): Promise<UserRole> {
   const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase.from("user_roles").select("role").single();
+  if (!user) return "free";
+
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("plan_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
   if (error) {
-    console.error(error);
+    console.error("Error fetching user subscription/role:", error);
   }
 
-  return data?.role as UserRole;
+  return (data?.plan_id || "free") as UserRole;
 }
 
 // Lo dejo así para mejorarlo a futuro

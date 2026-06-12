@@ -22,7 +22,7 @@ export default async function MonitoringPage() {
   const isPro = subscription?.plan_id === 'pro';
 
   return (
-    <div className="flex flex-col px-4 py-2 min-h-screen bg-gray-700">
+    <div className="flex flex-col px-4 py-2 min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black">
       <Header />
       <div className="max-w-4xl mx-auto w-full mt-6">
         <h1 className="text-2xl font-bold text-white mb-6">Monitorización SEO</h1>

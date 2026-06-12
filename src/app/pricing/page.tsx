@@ -66,7 +66,7 @@ export default async function PricingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-700">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black">
       <Header />
 
       {/* Hero Section */}

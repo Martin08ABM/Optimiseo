@@ -44,7 +44,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="flex flex-col px-4 py-2 min-h-screen bg-gray-700">
+    <div className="flex flex-col px-4 py-2 min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black">
       <HeaderClient />
       <div className='flex flex-col items-center justify-center mt-8'>
         <h1 className='text-2xl md:text-3xl font-title font-black text-white mt-4 mb-6 uppercase'>Cambiar la contraseña - OPTIMISEO</h1>

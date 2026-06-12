@@ -42,7 +42,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-950 max-w-full">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black max-w-full">
       <Header />
       <HeroOpenRouter isAuthenticated={!!user} usage={usage} isPro={isPro} />
 

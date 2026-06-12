@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function GuiaHTMLPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-600 to-gray-700">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black">
       <Header />
 
       <main className="container mx-auto px-4 py-12 max-w-6xl">

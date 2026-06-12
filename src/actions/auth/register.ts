@@ -43,18 +43,8 @@ export async function registerAction(formData: FormData): Promise<AuthResponse |
     return { error: error.message || 'Error al registrar el usuario' }
   }
 
-  if (data.user?.id) {
-    const { error: roleError } = await supabase
-      .from("user_roles")
-      .insert({
-        user_id: data.user.id,
-        role: "basic"
-      })
+  // El rol 'free' se asigna automáticamente a través del trigger en Supabase 'on_auth_user_created' que crea el registro en la tabla 'subscriptions'
 
-    if (roleError) {
-      return { error: "Usuario creado pero hubo un error asignando el rol" }
-    }
-  }
 
   redirect('/')
 }
