@@ -1,6 +1,7 @@
 import { StatsCard } from '@/src/components/admin/StatsCard';
 import { createAdminClient } from '@/src/lib/supabase/admin';
 import { RetryButton } from '@/src/components/ui/RetryButton';
+import { PRO_PRICE_MONTHLY } from '@/src/lib/config/pricing';
 
 async function getOverviewStats() {
   const supabaseAdmin = createAdminClient();
@@ -56,8 +57,8 @@ async function getOverviewStats() {
       .select('*', { count: 'exact', head: true })
       .gte('used_at', firstDayOfMonth.toISOString());
 
-    // Calcular MRR (Monthly Recurring Revenue) - asumiendo 9.99€ por suscripción
-    const mrr = (proUsers || 0) * 9.99;
+    // Calcular MRR (Monthly Recurring Revenue) usando el precio único de Pro
+    const mrr = (proUsers || 0) * PRO_PRICE_MONTHLY;
 
     return {
       users: {

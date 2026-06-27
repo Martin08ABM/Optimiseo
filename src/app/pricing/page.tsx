@@ -10,8 +10,10 @@
  */
 
 import Header from '@/src/components/Header';
+import Footer from '@/src/components/Footer';
 import { createServerSupabaseClient } from '@/src/lib/supabase/server';
 import PricingClient from './PricingClient';
+import { PLANS } from '@/src/lib/config/pricing';
 
 export default async function PricingPage() {
   // Obtener cliente de Supabase y verificar autenticación
@@ -32,38 +34,7 @@ export default async function PricingPage() {
     }
   }
 
-  const plans = [
-    {
-      id: 'free',
-      name: 'Plan Free',
-      price: 0,
-      description: 'Perfecto para empezar con análisis SEO básicos',
-      features: [
-        '5 análisis SEO diarios',
-        'Análisis de legibilidad',
-        'Análisis de repetición de palabras',
-        'Evaluación de coherencia',
-        'Soporte por email',
-      ],
-      highlighted: false,
-    },
-    {
-      id: 'pro',
-      name: 'Plan Pro',
-      price: 12,
-      description: 'Para profesionales que necesitan análisis ilimitados',
-      features: [
-        '100 análisis SEO diarios',
-        'Todos los tipos de análisis',
-        'Historial de análisis (30 días)',
-        'Comparación de revisiones',
-        'Exportación de resultados (PDF/JSON)',
-        'Soporte prioritario',
-        'Acceso anticipado a nuevas funciones',
-      ],
-      highlighted: true,
-    },
-  ];
+  const plans = PLANS;
 
   return (
     <div className="flex flex-col min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black">
@@ -86,8 +57,8 @@ export default async function PricingPage() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`bg-gray-400 border-2 border-black rounded-xl overflow-hidden ${
-                plan.highlighted ? 'md:scale-105 shadow-2xl' : 'shadow-lg'
+              className={`bg-gray-800 border border-gray-700 rounded-xl overflow-hidden ${
+                plan.highlighted ? 'md:scale-[1.02] shadow-2xl border-blue-500' : 'shadow-lg'
               }`}
             >
               {plan.highlighted && (
@@ -97,16 +68,16 @@ export default async function PricingPage() {
               )}
 
               <div className="p-6 md:p-8">
-                <h3 className="text-2xl md:text-3xl font-bold text-black mb-2">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
                   {plan.name}
                 </h3>
-                <p className="text-gray-800 mb-6">{plan.description}</p>
+                <p className="text-gray-400 mb-6">{plan.description}</p>
 
                 <div className="mb-6">
-                  <span className="text-4xl md:text-5xl font-bold text-black">
+                  <span className="text-4xl md:text-5xl font-bold text-white">
                     {plan.price}€
                   </span>
-                  <span className="text-gray-800 text-lg">/mes</span>
+                  <span className="text-gray-400 text-lg">/mes</span>
                 </div>
 
                 <PricingClient
@@ -119,14 +90,15 @@ export default async function PricingPage() {
                 />
 
                 <div className="space-y-4 mt-8">
-                  <p className="font-semibold text-black text-lg">
+                  <p className="font-semibold text-white text-lg">
                     Incluye:
                   </p>
                   <ul className="space-y-3">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
                         <svg
-                          className="w-5 h-5 text-green-600 mr-3 flex-shrink-0 mt-0.5"
+                          className="w-5 h-5 text-green-400 mr-3 flex-shrink-0 mt-0.5"
+                          aria-hidden="true"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -136,7 +108,7 @@ export default async function PricingPage() {
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span className="text-gray-900">{feature}</span>
+                        <span className="text-gray-300">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -154,41 +126,41 @@ export default async function PricingPage() {
             Preguntas frecuentes
           </h2>
           <div className="space-y-4">
-            <div className="bg-gray-400 border-2 border-black rounded-xl p-6">
-              <h3 className="font-semibold text-black mb-2 text-lg">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+              <h3 className="font-semibold text-white mb-2 text-lg">
                 ¿Puedo cambiar de plan en cualquier momento?
               </h3>
-              <p className="text-gray-800">
+              <p className="text-gray-300">
                 Sí, puedes actualizar o degradar tu plan en cualquier momento
                 desde el dashboard. Los cambios se aplicarán inmediatamente.
               </p>
             </div>
 
-            <div className="bg-gray-400 border-2 border-black rounded-xl p-6">
-              <h3 className="font-semibold text-black mb-2 text-lg">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+              <h3 className="font-semibold text-white mb-2 text-lg">
                 ¿Qué métodos de pago aceptan?
               </h3>
-              <p className="text-gray-800">
+              <p className="text-gray-300">
                 Aceptamos todas las tarjetas de crédito y débito principales a
                 través de Stripe, nuestra plataforma de pagos segura.
               </p>
             </div>
 
-            <div className="bg-gray-400 border-2 border-black rounded-xl p-6">
-              <h3 className="font-semibold text-black mb-2 text-lg">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+              <h3 className="font-semibold text-white mb-2 text-lg">
                 ¿Los límites diarios se reinician cada día?
               </h3>
-              <p className="text-gray-800">
+              <p className="text-gray-300">
                 Sí, los límites de análisis diarios se reinician a medianoche
                 (hora local) cada día.
               </p>
             </div>
 
-            <div className="bg-gray-400 border-2 border-black rounded-xl p-6">
-              <h3 className="font-semibold text-black mb-2 text-lg">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+              <h3 className="font-semibold text-white mb-2 text-lg">
                 ¿Hay garantía de devolución?
               </h3>
-              <p className="text-gray-800">
+              <p className="text-gray-300">
                 Ofrecemos una garantía de devolución de 14 días para el Plan
                 Pro. Si no estás satisfecho, te reembolsaremos el 100% de tu
                 dinero.
@@ -198,14 +170,7 @@ export default async function PricingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 mt-auto border-t-2 border-black">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">
-            © 2026 OptimiSEO. Todos los derechos reservados.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

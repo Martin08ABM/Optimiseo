@@ -75,10 +75,10 @@ export function SubscriptionCard() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 animate-pulse" role="status" aria-live="polite">
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4" />
-        <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-md p-6 animate-pulse" role="status" aria-live="polite">
+        <div className="h-6 bg-gray-700 rounded w-1/3 mb-4" />
+        <div className="h-4 bg-gray-700 rounded w-2/3 mb-2" />
+        <div className="h-4 bg-gray-700 rounded w-1/2" />
         <span className="sr-only">Cargando suscripción…</span>
       </div>
     );
@@ -86,8 +86,8 @@ export function SubscriptionCard() {
 
   if (loadError) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6" role="alert">
-        <p className="text-gray-800 text-sm mb-3">{loadError}</p>
+      <div className="bg-gray-800 border border-red-700/60 rounded-lg shadow-md p-6" role="alert">
+        <p className="text-red-300 text-sm mb-3">{loadError}</p>
         <button
           type="button"
           onClick={fetchSubscriptionStatus}
@@ -108,25 +108,25 @@ export function SubscriptionCard() {
   const usagePercentage = (usage.used / usage.limit) * 100;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-md p-6">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-          <p className="text-sm text-gray-600">{plan.description}</p>
+          <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+          <p className="text-sm text-gray-400">{plan.description}</p>
         </div>
         <div className="text-right">
           {isPro ? (
             <div>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600/20 text-blue-300">
                 Pro
               </span>
-              <p className="text-lg font-bold text-gray-900 mt-2">
+              <p className="text-lg font-bold text-white mt-2">
                 {plan.price_monthly.toFixed(2)}€
-                <span className="text-sm font-normal text-gray-600">/mes</span>
+                <span className="text-sm font-normal text-gray-400">/mes</span>
               </p>
             </div>
           ) : (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-700 text-gray-200">
               Free
             </span>
           )}
@@ -136,14 +136,14 @@ export function SubscriptionCard() {
       {/* Usage Stats */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-300">
             Análisis utilizados hoy
           </span>
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium text-white">
             {usage.used} / {usage.limit}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div className="w-full bg-gray-700 rounded-full h-2.5">
           <div
             className={`h-2.5 rounded-full transition-all ${
               usagePercentage >= 100
@@ -153,7 +153,7 @@ export function SubscriptionCard() {
                   : 'bg-blue-600'
             }`}
             style={{ width: `${Math.min(usagePercentage, 100)}%` }}
-          ></div>
+          />
         </div>
         <p className="text-xs text-gray-500 mt-1">
           Reinicia en:{' '}
@@ -166,14 +166,15 @@ export function SubscriptionCard() {
 
       {/* Features List */}
       <div className="mb-6">
-        <h4 className="text-sm font-semibold text-gray-900 mb-2">
+        <h4 className="text-sm font-semibold text-white mb-2">
           Características:
         </h4>
         <ul className="space-y-1">
           {plan.features.map((feature, index) => (
-            <li key={index} className="flex items-start text-sm text-gray-600">
+            <li key={index} className="flex items-start text-sm text-gray-300">
               <svg
-                className="w-5 h-5 text-green-500 mr-2 flex-shrink-0"
+                className="w-5 h-5 text-green-400 mr-2 flex-shrink-0"
+                aria-hidden="true"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -197,27 +198,25 @@ export function SubscriptionCard() {
             disabled={upgradingToPro}
             className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {upgradingToPro ? 'Procesando...' : 'Mejorar a Pro'}
+            {upgradingToPro ? 'Procesando…' : 'Mejorar a Pro'}
           </button>
         ) : (
           <button
             onClick={handleManageBilling}
             disabled={managingBilling}
-            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="flex-1 bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {managingBilling ? 'Cargando...' : 'Gestionar suscripción'}
+            {managingBilling ? 'Cargando…' : 'Gestionar suscripción'}
           </button>
         )}
       </div>
 
       {/* Subscription Status */}
       {isPro && subscription.cancel_at_period_end && (
-        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="text-sm text-yellow-800">
+        <div className="mt-4 p-3 bg-yellow-900/30 border border-yellow-700 rounded-md">
+          <p className="text-sm text-yellow-300">
             Tu suscripción se cancelará el{' '}
-            {new Date(subscription.current_period_end!).toLocaleDateString(
-              'es-ES'
-            )}
+            {new Date(subscription.current_period_end!).toLocaleDateString('es-ES')}
           </p>
         </div>
       )}

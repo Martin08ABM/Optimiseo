@@ -4,6 +4,18 @@
 @theme inline {
   --font-title: var(--atkinson-hyperlegible);
   --font-sans: var(--google-sans-code);
+
+  --color-surface: #111827;
+  --color-surface-2: #1f2937;
+  --color-surface-3: #374151;
+  --color-border: #374151;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --radius-card: 0.75rem;
+  --radius-btn: 0.5rem;
+  --color-focus-ring: #3b82f6;
 }
 
 body {

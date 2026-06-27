@@ -31,7 +31,6 @@ export { default as RevisionTitleConcordancy } from './RevisionTitleConcordancy'
 
 // Layout components
 export { default as Header } from './Header';
-export { default as HeaderClient } from './HeaderClient';
 export { default as MobileMenu } from './MobileMenu';
 export { default as Footer } from './Footer';
 
