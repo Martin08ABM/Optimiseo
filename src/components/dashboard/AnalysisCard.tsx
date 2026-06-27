@@ -38,6 +38,8 @@ export default function AnalysisCard({ analysis, isExpanded, onToggle, renderAct
     <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
       <button
         onClick={onToggle}
+        aria-expanded={isExpanded}
+        aria-controls={`analysis-card-${analysis.id}`}
         className="w-full text-left p-4 hover:bg-gray-750 transition-colors"
       >
         <div className="flex justify-between items-start gap-4">
@@ -64,7 +66,7 @@ export default function AnalysisCard({ analysis, isExpanded, onToggle, renderAct
       </button>
 
       {isExpanded && (
-        <div className="border-t border-gray-700 p-4">
+        <div id={`analysis-card-${analysis.id}`} className="border-t border-gray-700 p-4">
           {scores && <SEOScoreDisplay scores={scores} />}
           <div className="bg-gray-900 rounded-lg p-4 prose prose-invert prose-sm max-w-none
             prose-headings:text-white prose-headings:mt-4 prose-headings:mb-2

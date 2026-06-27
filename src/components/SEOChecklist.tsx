@@ -9,10 +9,10 @@ interface SEOChecklistProps {
   scrapedData: ScrapedContent;
 }
 
-const STATUS_ICONS: Record<string, { icon: string; color: string }> = {
-  pass: { icon: '\u2713', color: 'text-green-400' },
-  warning: { icon: '\u26A0', color: 'text-yellow-400' },
-  fail: { icon: '\u2717', color: 'text-red-400' },
+const STATUS_ICONS: Record<string, { icon: string; color: string; label: string }> = {
+  pass: { icon: '\u2713', color: 'text-green-400', label: 'Aprobado' },
+  warning: { icon: '\u26A0', color: 'text-yellow-400', label: 'Advertencia' },
+  fail: { icon: '\u2717', color: 'text-red-400', label: 'Fallido' },
 };
 
 export default function SEOChecklist({ scrapedData }: SEOChecklistProps) {
@@ -43,10 +43,15 @@ export default function SEOChecklist({ scrapedData }: SEOChecklistProps) {
 
       {/* Categories */}
       <div className="space-y-2">
-        {categories.map(cat => (
+        {categories.map(cat => {
+          const panelId = `checklist-panel-${cat}`;
+          const isCollapsed = !!collapsed[cat];
+          return (
           <div key={cat} className="border border-gray-700 rounded-lg overflow-hidden">
             <button
               onClick={() => toggleCategory(cat)}
+              aria-expanded={!isCollapsed}
+              aria-controls={panelId}
               className="w-full flex justify-between items-center px-3 py-2 bg-gray-800 hover:bg-gray-750 transition-colors text-sm"
             >
               <span className="text-gray-200 font-medium">{CATEGORY_LABELS[cat] || cat}</span>
@@ -54,17 +59,18 @@ export default function SEOChecklist({ scrapedData }: SEOChecklistProps) {
                 <span className="text-green-400 text-xs">{grouped[cat].filter(i => i.status === 'pass').length}</span>
                 <span className="text-yellow-400 text-xs">{grouped[cat].filter(i => i.status === 'warning').length}</span>
                 <span className="text-red-400 text-xs">{grouped[cat].filter(i => i.status === 'fail').length}</span>
-                <span className="text-gray-500 text-xs">{collapsed[cat] ? '\u25B6' : '\u25BC'}</span>
+                <span className="text-gray-500 text-xs" aria-hidden="true">{isCollapsed ? '\u25B6' : '\u25BC'}</span>
               </div>
             </button>
 
-            {!collapsed[cat] && (
-              <div className="divide-y divide-gray-700">
+            {!isCollapsed && (
+              <div id={panelId} className="divide-y divide-gray-700">
                 {grouped[cat].map(item => {
                   const s = STATUS_ICONS[item.status];
                   return (
                     <div key={item.id} className="flex items-start gap-3 px-3 py-2 text-sm">
-                      <span className={`${s.color} mt-0.5 shrink-0 font-bold`}>{s.icon}</span>
+                      <span className={`${s.color} mt-0.5 shrink-0 font-bold`} aria-hidden="true">{s.icon}</span>
+                      <span className="sr-only">{s.label}: </span>
                       <div>
                         <span className="text-gray-200">{item.label}</span>
                         <p className="text-gray-500 text-xs mt-0.5">{item.detail}</p>
@@ -75,7 +81,8 @@ export default function SEOChecklist({ scrapedData }: SEOChecklistProps) {
               </div>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

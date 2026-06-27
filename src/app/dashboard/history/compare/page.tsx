@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/src/lib/supabase/server';
 import { getAnalysisHistory } from '@/src/lib/subscription/utils';
 import CompareClient from '@/src/components/dashboard/CompareClient';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,7 @@ export default async function ComparePage() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) return null;
+  if (!user) redirect('/auth/login');
 
   const { data: subscription } = await supabase
     .from('subscriptions')

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Modal } from '@/src/components/ui/Modal';
+import { useToast } from '@/src/components/ui/Toast';
 
 interface DiscountCode {
   id: string;
@@ -19,8 +21,10 @@ interface DiscountCodeTableProps {
 }
 
 export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
+  const toast = useToast();
   const [codes, setCodes] = useState(initialCodes);
   const [loading, setLoading] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DiscountCode | null>(null);
 
   const handleToggleActive = async (codeId: string, isActive: boolean) => {
     setLoading(codeId);
@@ -33,22 +37,22 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
       });
 
       if (res.ok) {
-        setCodes(codes.map(c =>
-          c.id === codeId ? { ...c, is_active: !isActive } : c
-        ));
+        setCodes((prev) => prev.map((c) => (c.id === codeId ? { ...c, is_active: !isActive } : c)));
+        toast.success(!isActive ? 'Código activado' : 'Código desactivado');
       } else {
-        alert('Error al actualizar código');
+        toast.error('Error al actualizar código');
       }
-    } catch (error) {
-      alert('Error al procesar solicitud');
+    } catch {
+      toast.error('Error al procesar solicitud');
     } finally {
       setLoading(null);
     }
   };
 
-  const handleDelete = async (codeId: string, code: string) => {
-    if (!confirm(`¿Eliminar el código "${code}"?`)) return;
-
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const codeId = deleteTarget.id;
+    setDeleteTarget(null);
     setLoading(codeId);
 
     try {
@@ -57,47 +61,55 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
       });
 
       if (res.ok) {
-        setCodes(codes.filter(c => c.id !== codeId));
-        alert('Código eliminado');
+        setCodes((prev) => prev.filter((c) => c.id !== codeId));
+        toast.success('Código eliminado');
       } else {
-        alert('Error al eliminar código');
+        toast.error('Error al eliminar código');
       }
-    } catch (error) {
-      alert('Error al procesar solicitud');
+    } catch {
+      toast.error('Error al procesar solicitud');
     } finally {
       setLoading(null);
     }
   };
 
-  const copyToClipboard = (code: string) => {
-    navigator.clipboard.writeText(code);
-    alert(`Código "${code}" copiado al portapapeles`);
+  const copyToClipboard = async (code: string) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(code);
+        toast.success(`Código "${code}" copiado al portapapeles`);
+      } else {
+        toast.error('No se pudo copiar: portapapeles no disponible');
+      }
+    } catch {
+      toast.error('No se pudo copiar el código');
+    }
   };
 
   return (
     <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
       <table className="min-w-full divide-y divide-gray-700">
-        <thead className="bg-gray-900 text-sm">
-          <tr className='text-sm'>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+        <thead className="bg-gray-900">
+          <tr>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Código
             </th>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Tipo
             </th>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Descuento
             </th>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Usos
             </th>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Expira
             </th>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Estado
             </th>
-            <th className="px-6 py-3 text-left text-[0.5rem] font-medium text-gray-300 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
               Acciones
             </th>
           </tr>
@@ -113,24 +125,25 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
                   <button
                     onClick={() => copyToClipboard(code.code)}
                     className="font-mono font-bold text-blue-600 hover:text-blue-800"
+                    aria-label={`Copiar código ${code.code}`}
                     title="Copiar código"
                   >
                     {code.code}
                   </button>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[0.5rem] text-gray-300">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   {code.type === 'percentage' ? 'Porcentaje' : 'Fijo'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[0.5rem] text-white font-semibold">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-semibold">
                   {code.type === 'percentage' ? `${code.value}%` : `${code.value}€`}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[0.5rem] text-gray-300">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   {usageCount} usos
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[0.5rem] text-gray-300">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   {code.expires_at ? (
                     <span className={isExpired ? 'text-red-600' : ''}>
-                      {new Date(code.expires_at).toLocaleDateString()}
+                      {new Date(code.expires_at).toLocaleDateString('es-ES')}
                     </span>
                   ) : (
                     <span className="text-gray-400">Sin expiración</span>
@@ -138,7 +151,7 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 py-1 text-[0.5rem] font-semibold rounded-full ${
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
                       code.is_active && !isExpired
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
@@ -147,7 +160,7 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
                     {isExpired ? 'Expirado' : code.is_active ? 'Activo' : 'Inactivo'}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[0.65rem] space-x-2">
+                <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                   <button
                     onClick={() => handleToggleActive(code.id, code.is_active)}
                     disabled={loading === code.id || isExpired}
@@ -160,7 +173,7 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
                     {code.is_active ? 'Desactivar' : 'Activar'}
                   </button>
                   <button
-                    onClick={() => handleDelete(code.id, code.code)}
+                    onClick={() => setDeleteTarget(code)}
                     disabled={loading === code.id}
                     className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
                   >
@@ -178,6 +191,35 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
           No hay códigos de descuento
         </div>
       )}
+
+      <Modal
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="Eliminar código"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setDeleteTarget(null)}
+              className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={confirmDelete}
+              className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition"
+            >
+              Eliminar
+            </button>
+          </>
+        }
+      >
+        <p>
+          ¿Eliminar el código <strong className="text-white font-mono">{deleteTarget?.code}</strong>?
+          Esta acción no se puede deshacer.
+        </p>
+      </Modal>
     </div>
   );
 }

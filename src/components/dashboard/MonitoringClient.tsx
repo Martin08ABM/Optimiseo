@@ -202,6 +202,8 @@ export default function MonitoringClient() {
                   {/* URL + info */}
                   <button
                     onClick={() => handleExpand(url)}
+                    aria-expanded={expandedId === url.id}
+                    aria-controls={`monitoring-panel-${url.id}`}
                     className="flex-1 text-left min-w-0"
                   >
                     <p className="text-sm text-gray-300 truncate">{url.url}</p>
@@ -244,6 +246,7 @@ export default function MonitoringClient() {
                   <button
                     onClick={() => handleDelete(url.id)}
                     className="text-red-400 hover:text-red-300 text-sm shrink-0"
+                    aria-label={`Eliminar monitorización de ${url.url}`}
                     title="Eliminar"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -255,7 +258,7 @@ export default function MonitoringClient() {
 
               {/* Expanded: Score history chart */}
               {expandedId === url.id && (
-                <div className="border-t border-gray-700 p-4">
+                <div id={`monitoring-panel-${url.id}`} className="border-t border-gray-700 p-4">
                   <h4 className="text-sm font-medium text-gray-400 mb-3">Evolución del score</h4>
                   {historyLoading ? (
                     <div className="h-32 bg-gray-900 rounded animate-pulse" />

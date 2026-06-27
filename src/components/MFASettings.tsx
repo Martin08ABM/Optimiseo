@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { getMFAFactors } from '@/src/actions/auth/mfa-verify'
 import { unenrollMFA } from '@/src/actions/auth/mfa-unenroll'
 import { MFAEnrollDialog } from './MFAEnrollDialog'
+import { Modal } from '@/src/components/ui/Modal'
 
 export function MFASettings() {
   const [hasMFA, setHasMFA] = useState(false)
   const [factorId, setFactorId] = useState('')
   const [loading, setLoading] = useState(true)
   const [showEnrollDialog, setShowEnrollDialog] = useState(false)
+  const [showDisableConfirm, setShowDisableConfirm] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -33,10 +35,7 @@ export function MFASettings() {
   }, [])
 
   const handleDisableMFA = async () => {
-    if (!confirm('¿Estás seguro de que deseas desactivar la autenticación de dos factores?')) {
-      return
-    }
-
+    setShowDisableConfirm(false)
     setLoading(true)
     setError('')
     setSuccess('')
@@ -101,7 +100,7 @@ export function MFASettings() {
             </div>
 
             <button
-              onClick={handleDisableMFA}
+              onClick={() => setShowDisableConfirm(true)}
               disabled={loading}
               className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 border-2 border-black rounded-lg transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
@@ -136,6 +135,32 @@ export function MFASettings() {
           onCancelled={handleCancelled}
         />
       )}
+
+      <Modal
+        open={showDisableConfirm}
+        onClose={() => setShowDisableConfirm(false)}
+        title="Desactivar 2FA"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowDisableConfirm(false)}
+              className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleDisableMFA}
+              className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition"
+            >
+              Desactivar
+            </button>
+          </>
+        }
+      >
+        <p>¿Estás seguro de que deseas desactivar la autenticación de dos factores? Tu cuenta será menos segura.</p>
+      </Modal>
     </>
   )
 }

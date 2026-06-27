@@ -22,6 +22,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import MatomoTagManager from "@/src/components/MatomoTagManager";
 import { Analytics } from "@vercel/analytics/next"
+import { ToastProvider } from "@/src/components/ui/Toast";
 
 // Configuración de la fuente Atkinson Hyperlegible
 // Fuente monoespaciada optimizada para legibilidad
@@ -105,7 +106,13 @@ export default function RootLayout({
       <head>
         <script defer data-domain="optimiseo.pro" src="https://analytics.optimiseo.pro/js/script.js"></script>
       </head>
-      <body cz-shortcut-listen="true">
+      <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:rounded-lg focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white"
+        >
+          Saltar al contenido
+        </a>
         {/* Matomo Tag Manager */}
         <MatomoTagManager />
         <script
@@ -130,7 +137,9 @@ export default function RootLayout({
             }),
           }}
         />
-        {children}
+        <ToastProvider>
+          <main id="main-content">{children}</main>
+        </ToastProvider>
         <Analytics />
       </body>
     </html>

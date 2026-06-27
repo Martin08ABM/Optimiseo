@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 
 interface MobileMenuProps {
@@ -9,15 +9,20 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isAuthenticated }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const menuId = 'mobile-menu';
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   return (
     <div className="md:hidden">
       <button
+        ref={closeRef}
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 text-black"
-        aria-label="Menú"
+        aria-label="Abrir menú de navegación"
+        aria-expanded={isOpen}
+        aria-controls={menuId}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           {isOpen ? (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           ) : (
@@ -27,9 +32,11 @@ export default function MobileMenu({ isAuthenticated }: MobileMenuProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-gray-400 border-2 border-black rounded-b-xl mx-4 p-4 z-50">
+        <div
+          id={menuId}
+          className="absolute top-16 left-0 right-0 bg-gray-400 border-2 border-black rounded-b-xl mx-4 p-4 z-50"
+        >
           <nav className="flex flex-col gap-4 text-black font-sans">
-            <Link href="/usecase" onClick={() => setIsOpen(false)}>Casos de uso</Link>
             <Link href="/pricing" onClick={() => setIsOpen(false)}>Precios</Link>
             <Link href="/guia-html" onClick={() => setIsOpen(false)}>Guía HTML</Link>
             <hr className="border-black" />

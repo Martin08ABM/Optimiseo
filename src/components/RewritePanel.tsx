@@ -21,14 +21,16 @@ export default function RewritePanel({ scrapedData, onApplyText }: RewritePanelP
     <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-4">
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        aria-controls="rewrite-panel-content"
         className="w-full flex justify-between items-center"
       >
         <h4 className="font-semibold text-white">Reescritura asistida por IA</h4>
-        <span className="text-gray-500 text-xs">{expanded ? '\u25BC' : '\u25B6'}</span>
+        <span className="text-gray-500 text-xs" aria-hidden="true">{expanded ? '\u25BC' : '\u25B6'}</span>
       </button>
 
       {expanded && (
-        <div className="mt-4 space-y-4">
+        <div id="rewrite-panel-content" className="mt-4 space-y-4">
           {/* Title */}
           {scrapedData.title && (
             <div className="border-b border-gray-700 pb-3">

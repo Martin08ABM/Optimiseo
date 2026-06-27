@@ -2,6 +2,7 @@ import Header from '@/src/components/Header';
 import { createServerSupabaseClient } from '@/src/lib/supabase/server';
 import MonitoringClient from '@/src/components/dashboard/MonitoringClient';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,7 @@ export default async function MonitoringPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return null;
+    redirect('/auth/login');
   }
 
   const { data: subscription } = await supabase

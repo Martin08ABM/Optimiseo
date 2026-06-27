@@ -187,16 +187,19 @@ export function HeroForm({ onSubmit, disabled, isLoading }: HeroFormProps) {
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
+            aria-expanded={showAdvanced}
+            aria-controls="hero-advanced-options"
             className="w-full flex justify-between items-center px-4 py-3 text-sm font-semibold text-gray-300 hover:bg-gray-700/30 transition-colors"
           >
             <span className="flex items-center gap-2">
-              <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 text-blue-400" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               Opciones Avanzadas (Auditoría de Competidores)
             </span>
             <svg
               className={`h-4 w-4 text-gray-500 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
+              aria-hidden="true"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -206,7 +209,7 @@ export function HeroForm({ onSubmit, disabled, isLoading }: HeroFormProps) {
           </button>
 
           {showAdvanced && (
-            <div className="p-4 border-t border-gray-700 space-y-4 bg-gray-900/80">
+            <div id="hero-advanced-options" className="p-4 border-t border-gray-700 space-y-4 bg-gray-900/80">
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-400">Palabra Clave Objetivo (Target Keyword)</label>
                 <input

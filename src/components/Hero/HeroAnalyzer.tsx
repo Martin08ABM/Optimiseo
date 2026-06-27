@@ -5,8 +5,8 @@ import { HeroForm } from "@/src/components/Hero/HeroForm";
 import { HeroResults } from "@/src/components/Hero/HeroResults";
 import { AnalysisProgress } from "@/src/components/AnalysisProgress";
 import { ErrorBoundary } from "@/src/components/ErrorBoundary";
+import { useToast } from "@/src/components/ui/Toast";
 import type { SEOScores } from "@/src/lib/seo/scoreParser";
-import type { ScrapedContent } from "@/src/app/api/ai/shared/types";
 import { AnalysisRequestSchema, getValidationErrors } from "@/src/lib/validation/schemas";
 
 interface AnalysisResult {
@@ -35,12 +35,15 @@ interface HeroAnalyzerProps {
 }
 
 export default function HeroAnalyzer({ isAuthenticated, usage: initialUsage, isPro }: HeroAnalyzerProps) {
+  const toast = useToast();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [usage, setUsage] = useState<UsageStats | undefined>(initialUsage);
   const [saved, setSaved] = useState(false);
   const [monitored, setMonitored] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [monitoring, setMonitoring] = useState(false);
 
   useEffect(() => {
     setUsage(initialUsage);
@@ -144,14 +147,60 @@ export default function HeroAnalyzer({ isAuthenticated, usage: initialUsage, isP
     });
   };
 
-  const handleSave = () => {
-    setSaved(true);
-    console.log('Guardando análisis:', result?.analysisId);
+  const handleSave = async () => {
+    if (!result?.analysisId) {
+      toast.error('No hay análisis que guardar');
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch('/api/analyses/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          analysisId: result.analysisId,
+          message: result.message,
+          scrapedData: result.scrapedData,
+          scores: result.scores,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Error al guardar el análisis');
+      }
+      setSaved(true);
+      toast.success('Análisis guardado en tu historial');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error al guardar el análisis');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleMonitor = () => {
-    setMonitored(true);
-    console.log('Monitoreando cambios para:', result?.analysisId);
+  const handleMonitor = async () => {
+    const url = (result?.scrapedData as { url?: string } | null)?.url;
+    if (!url) {
+      toast.error('No hay URL para monitorizar');
+      return;
+    }
+    setMonitoring(true);
+    try {
+      const res = await fetch('/api/monitoring', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Error al iniciar la monitorización');
+      }
+      setMonitored(true);
+      toast.success('URL añadida a tu monitorización');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error al monitorizar');
+    } finally {
+      setMonitoring(false);
+    }
   };
 
   if (!isAuthenticated) {
@@ -251,6 +300,8 @@ export default function HeroAnalyzer({ isAuthenticated, usage: initialUsage, isP
               onMonitor={handleMonitor}
               saved={saved}
               monitored={monitored}
+              saving={saving}
+              monitoring={monitoring}
               usage={usage}
               onReanalyze={handleReanalyze}
               isReanalyzing={loading}

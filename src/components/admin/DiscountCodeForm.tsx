@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useToast } from '@/src/components/ui/Toast';
 
 interface DiscountCodeFormProps {
   onSuccess: () => void;
 }
 
 export function DiscountCodeForm({ onSuccess }: DiscountCodeFormProps) {
+  const toast = useToast();
   const [code, setCode] = useState('');
   const [type, setType] = useState<'percentage' | 'fixed'>('percentage');
   const [value, setValue] = useState('');
@@ -36,7 +38,7 @@ export function DiscountCodeForm({ onSuccess }: DiscountCodeFormProps) {
       const data = await res.json();
 
       if (res.ok) {
-        alert('Código creado exitosamente');
+        toast.success('Código creado exitosamente');
         setCode('');
         setValue('');
         setMaxUsesPerUser('1');
@@ -45,7 +47,7 @@ export function DiscountCodeForm({ onSuccess }: DiscountCodeFormProps) {
       } else {
         setError(data.error || 'Error al crear código');
       }
-    } catch (err) {
+    } catch {
       setError('Error al procesar solicitud');
     } finally {
       setLoading(false);

@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/src/lib/supabase/server';
 import { getAnalysisHistory } from '@/src/lib/subscription/utils';
 import HistoryClient from '@/src/components/dashboard/HistoryClient';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,7 @@ export default async function HistoryPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return null;
+    redirect('/auth/login');
   }
 
   // Check subscription
