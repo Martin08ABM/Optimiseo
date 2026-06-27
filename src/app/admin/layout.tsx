@@ -2,6 +2,7 @@ import { AdminGuard } from '@/src/components/admin/AdminGuard';
 import Header from '@/src/components/Header';
 import Footer from '@/src/components/Footer';
 import Link from 'next/link';
+import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 
 export default function AdminLayout({
   children,
@@ -11,6 +12,7 @@ export default function AdminLayout({
   return (
   <div className="-mt-4">
     <AdminGuard>
+      <ErrorBoundary>
       <div className="min-h-screen bg-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Header />
@@ -48,6 +50,7 @@ export default function AdminLayout({
           <Footer />
         </div>
       </div>
+      </ErrorBoundary>
     </AdminGuard>
   </div>
   );

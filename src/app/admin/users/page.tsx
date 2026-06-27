@@ -1,5 +1,6 @@
 import { UserTable } from '@/src/components/admin/UserTable';
 import { createAdminClient } from '@/src/lib/supabase/admin';
+import { RetryButton } from '@/src/components/ui/RetryButton';
 
 async function getUsers() {
   const supabaseAdmin = createAdminClient();
@@ -60,7 +61,7 @@ async function getUsers() {
     return { users, total: users.length };
   } catch (error) {
     console.error('Error fetching users:', error);
-    return { users: [], total: 0 };
+    return { users: [], total: 0, error: 'No se pudieron cargar los usuarios' };
   }
 }
 
@@ -76,7 +77,14 @@ export default async function UsersPage() {
         </p>
       </div>
 
-      <UserTable initialUsers={data.users} total={data.total} />
+      {'error' in data && data.error ? (
+        <div className="bg-gray-800 border border-red-700/60 p-6 rounded-xl" role="alert">
+          <p className="text-red-300 text-sm mb-4">{data.error}</p>
+          <RetryButton />
+        </div>
+      ) : (
+        <UserTable initialUsers={data.users} total={data.total} />
+      )}
     </div>
   );
 }

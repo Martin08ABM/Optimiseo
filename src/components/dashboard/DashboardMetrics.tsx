@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import {
   BarChart,
   Bar,
@@ -37,20 +38,51 @@ interface DashboardMetricsProps {
 export default function DashboardMetrics({ isPro }: DashboardMetricsProps) {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadStats = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/dashboard/stats');
+      if (!res.ok) {
+        throw new Error(`No se pudieron cargar las métricas (${res.status})`);
+      }
+      const data = await res.json();
+      setStats(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al cargar las métricas');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetch('/api/dashboard/stats')
-      .then(r => r.json())
-      .then(setStats)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+    loadStats();
+  }, [loadStats]);
 
   if (loading) {
     return (
-      <div className="bg-gray-800 rounded-xl p-6 mb-6 animate-pulse">
+      <div className="bg-gray-800 rounded-xl p-6 mb-6 animate-pulse" role="status" aria-live="polite">
         <div className="h-6 bg-gray-700 rounded w-48 mb-4" />
         <div className="h-48 bg-gray-700 rounded" />
+        <span className="sr-only">Cargando métricas…</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-gray-800 border border-red-700/60 rounded-xl p-6 mb-6" role="alert">
+        <h2 className="text-lg font-semibold text-white mb-2">Métricas de uso</h2>
+        <p className="text-red-300 text-sm mb-4">{error}</p>
+        <button
+          type="button"
+          onClick={loadStats}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+        >
+          Reintentar
+        </button>
       </div>
     );
   }
@@ -74,9 +106,9 @@ export default function DashboardMetrics({ isPro }: DashboardMetricsProps) {
         <div className="absolute inset-0 flex items-center justify-center bg-gray-800/60">
           <div className="text-center">
             <p className="text-white font-semibold mb-2">Métricas avanzadas</p>
-            <a href="/pricing" className="text-blue-400 hover:text-blue-300 text-sm underline">
+            <Link href="/pricing" className="text-blue-400 hover:text-blue-300 text-sm underline">
               Mejorar a Pro
-            </a>
+            </Link>
           </div>
         </div>
       </div>

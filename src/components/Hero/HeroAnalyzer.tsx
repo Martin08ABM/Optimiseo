@@ -286,7 +286,7 @@ export default function HeroAnalyzer({ isAuthenticated, usage: initialUsage, isP
 
         {error && (
           <div className="w-full max-w-2xl px-4">
-            <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg">
+            <div role="alert" className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg">
               {error}
             </div>
           </div>

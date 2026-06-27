@@ -13,6 +13,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useToast } from '@/src/components/ui/Toast';
 
 interface PricingClientProps {
   planId: string;
@@ -30,6 +31,7 @@ export default function PricingClient({
   currentPlanId,
   isHighlighted,
 }: PricingClientProps) {
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [discountCode, setDiscountCode] = useState('');
   const [discountInfo, setDiscountInfo] = useState<{
@@ -116,12 +118,15 @@ export default function PricingClient({
             discountCode: discountInfo?.valid ? discountCode.trim() : null
           }),
         });
-        const { url } = await response.json();
+        const { url, error } = await response.json();
         if (url) {
           window.location.href = url;
+        } else {
+          toast.error(error || 'No se pudo iniciar el pago. Inténtalo de nuevo.');
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error creating checkout session:', error);
+      } catch {
+        toast.error('Error de conexión al iniciar el pago');
         setLoading(false);
       }
     };
@@ -209,12 +214,15 @@ export default function PricingClient({
         const response = await fetch('/api/subscription/portal', {
           method: 'POST',
         });
-        const { url } = await response.json();
+        const { url, error } = await response.json();
         if (url) {
           window.location.href = url;
+        } else {
+          toast.error(error || 'No se pudo abrir la gestión de suscripción.');
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error creating portal session:', error);
+      } catch {
+        toast.error('Error de conexión al abrir la gestión de suscripción');
         setLoading(false);
       }
     };

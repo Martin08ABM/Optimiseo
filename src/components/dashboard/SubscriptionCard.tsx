@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import type { UserSubscriptionData } from '@/src/types/subscription';
+import { useToast } from '@/src/components/ui/Toast';
 
 export function SubscriptionCard() {
+  const toast = useToast();
   const [subscriptionData, setSubscriptionData] =
     useState<UserSubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [upgradingToPro, setUpgradingToPro] = useState(false);
   const [managingBilling, setManagingBilling] = useState(false);
 
@@ -15,14 +18,18 @@ export function SubscriptionCard() {
   }, []);
 
   const fetchSubscriptionStatus = async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const response = await fetch('/api/subscription/status');
       if (response.ok) {
         const data = await response.json();
         setSubscriptionData(data);
+      } else {
+        setLoadError('No se pudo cargar tu suscripción');
       }
-    } catch (error) {
-      console.error('Error fetching subscription:', error);
+    } catch {
+      setLoadError('Error de conexión al cargar tu suscripción');
     } finally {
       setLoading(false);
     }
@@ -37,9 +44,12 @@ export function SubscriptionCard() {
       const { url } = await response.json();
       if (url) {
         window.location.href = url;
+      } else {
+        toast.error('No se pudo iniciar el pago. Inténtalo de nuevo.');
+        setUpgradingToPro(false);
       }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
+    } catch {
+      toast.error('Error de conexión al iniciar el pago');
       setUpgradingToPro(false);
     }
   };
@@ -53,19 +63,38 @@ export function SubscriptionCard() {
       const { url } = await response.json();
       if (url) {
         window.location.href = url;
+      } else {
+        toast.error('No se pudo abrir la gestión de suscripción.');
+        setManagingBilling(false);
       }
-    } catch (error) {
-      console.error('Error creating portal session:', error);
+    } catch {
+      toast.error('Error de conexión al abrir la gestión de suscripción');
       setManagingBilling(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div className="bg-white rounded-lg shadow-md p-6 animate-pulse" role="status" aria-live="polite">
+        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4" />
+        <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
+        <div className="h-4 bg-gray-200 rounded w-1/2" />
+        <span className="sr-only">Cargando suscripción…</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6" role="alert">
+        <p className="text-gray-800 text-sm mb-3">{loadError}</p>
+        <button
+          type="button"
+          onClick={fetchSubscriptionStatus}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
+        >
+          Reintentar
+        </button>
       </div>
     );
   }

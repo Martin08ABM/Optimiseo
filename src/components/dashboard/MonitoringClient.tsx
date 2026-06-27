@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { useToast } from '@/src/components/ui/Toast';
 
 interface MonitoredUrl {
   id: string;
@@ -32,8 +33,10 @@ const FREQ_LABELS: Record<string, string> = {
 };
 
 export default function MonitoringClient() {
+  const toast = useToast();
   const [urls, setUrls] = useState<MonitoredUrl[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [newUrl, setNewUrl] = useState('');
   const [newFreq, setNewFreq] = useState('weekly');
   const [adding, setAdding] = useState(false);
@@ -47,12 +50,15 @@ export default function MonitoringClient() {
   }, []);
 
   const fetchUrls = async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const res = await fetch('/api/monitoring');
+      if (!res.ok) throw new Error('No se pudieron cargar tus URLs');
       const data = await res.json();
       setUrls(data.urls || []);
-    } catch {
-      // silent
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : 'Error al cargar las URLs');
     } finally {
       setLoading(false);
     }
@@ -72,6 +78,7 @@ export default function MonitoringClient() {
       if (!res.ok) throw new Error(data.error);
       setUrls(prev => [data.url, ...prev]);
       setNewUrl('');
+      toast.success('URL añadida a monitorización');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error al añadir');
     } finally {
@@ -80,43 +87,55 @@ export default function MonitoringClient() {
   };
 
   const handleDelete = async (id: string) => {
+    const previous = urls;
+    setUrls(prev => prev.filter(u => u.id !== id));
     try {
-      await fetch(`/api/monitoring/${id}`, { method: 'DELETE' });
-      setUrls(prev => prev.filter(u => u.id !== id));
-    } catch {
-      // silent
+      const res = await fetch(`/api/monitoring/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('No se pudo eliminar');
+      toast.success('URL eliminada de monitorización');
+    } catch (err) {
+      setUrls(previous);
+      toast.error(err instanceof Error ? err.message : 'Error al eliminar la URL');
+    } finally {
     }
   };
 
   const handleToggleActive = async (id: string, isActive: boolean) => {
+    const previous = urls;
+    setUrls(prev => prev.map(u => (u.id === id ? { ...u, is_active: !isActive } : u)));
     try {
       const res = await fetch(`/api/monitoring/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_active: !isActive }),
       });
+      if (!res.ok) throw new Error('No se pudo actualizar');
       const data = await res.json();
-      if (res.ok) {
-        setUrls(prev => prev.map(u => u.id === id ? data.url : u));
-      }
-    } catch {
-      // silent
+      setUrls(prev => prev.map(u => (u.id === id ? data.url : u)));
+      toast.success(!isActive ? 'Monitorización reactivada' : 'Monitorización pausada');
+    } catch (err) {
+      setUrls(previous);
+      toast.error(err instanceof Error ? err.message : 'Error al actualizar');
+    } finally {
     }
   };
 
   const handleFrequencyChange = async (id: string, frequency: string) => {
+    const previous = urls;
+    setUrls(prev => prev.map(u => (u.id === id ? { ...u, frequency } : u)));
     try {
       const res = await fetch(`/api/monitoring/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ frequency }),
       });
+      if (!res.ok) throw new Error('No se pudo cambiar la frecuencia');
       const data = await res.json();
-      if (res.ok) {
-        setUrls(prev => prev.map(u => u.id === id ? data.url : u));
-      }
-    } catch {
-      // silent
+      setUrls(prev => prev.map(u => (u.id === id ? data.url : u)));
+    } catch (err) {
+      setUrls(previous);
+      toast.error(err instanceof Error ? err.message : 'Error al cambiar la frecuencia');
+    } finally {
     }
   };
 
@@ -147,10 +166,26 @@ export default function MonitoringClient() {
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-pulse">
+      <div className="space-y-4 animate-pulse" role="status" aria-live="polite">
         <div className="h-12 bg-gray-800 rounded-xl" />
         <div className="h-20 bg-gray-800 rounded-xl" />
         <div className="h-20 bg-gray-800 rounded-xl" />
+        <span className="sr-only">Cargando monitorización…</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="bg-gray-800 border border-red-700/60 rounded-xl p-6" role="alert">
+        <p className="text-red-300 text-sm mb-4">{loadError}</p>
+        <button
+          type="button"
+          onClick={fetchUrls}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+        >
+          Reintentar
+        </button>
       </div>
     );
   }

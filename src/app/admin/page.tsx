@@ -1,5 +1,6 @@
 import { StatsCard } from '@/src/components/admin/StatsCard';
 import { createAdminClient } from '@/src/lib/supabase/admin';
+import { RetryButton } from '@/src/components/ui/RetryButton';
 
 async function getOverviewStats() {
   const supabaseAdmin = createAdminClient();
@@ -90,8 +91,9 @@ export default async function AdminDashboard() {
 
   if (!stats) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-400">Error al cargar estadísticas</p>
+      <div className="text-center py-12" role="alert">
+        <p className="text-red-400 mb-4">Error al cargar estadísticas</p>
+        <RetryButton />
       </div>
     );
   }
