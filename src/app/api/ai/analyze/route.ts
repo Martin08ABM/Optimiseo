@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AIProvider, createAIProvider } from "@/src/lib/openrouter/provider";
+import { AIProvider, createAIProvider } from "@/src/lib/ai/gemini/provider";
 import { scrapeURL } from "../shared/webSearch";
 import { buildPromptWithScrapedData } from "../shared/prompts";
 import type { ScrapedContent } from "../shared/types";
@@ -10,7 +10,7 @@ import { analysisCache } from "@/src/lib/cache/analysis";
 import { AnalysisRequestSchema, getValidationErrors } from "@/src/lib/validation/schemas";
 import { ErrorTracker, PerformanceTracker } from "@/src/lib/logger/errorTracker";
 
-// Initialize AI provider - Auto-detects between Anthropic direct and OpenRouter
+// Initialize AI provider (Google Gemini)
 const aiProvider = createAIProvider();
 
 // Function to extract URL from text
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
           competitorData
         );
         
-        // 8. Call AI using OpenRouter (or direct Anthropic)
+        // 8. Call AI using Google Gemini
         const response = await aiProvider.complete({
           messages: [{ role: 'user', content: fullPrompt }],
           maxTokens: 4096,

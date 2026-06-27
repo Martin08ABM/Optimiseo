@@ -9,7 +9,7 @@
  */
 
 'use server';
-import HeroOpenRouter from "@/src/components/Hero/HeroOpenRouter";
+import HeroAnalyzer from "@/src/components/Hero/HeroAnalyzer";
 import Header from "@/src/components/Header";
 import RevisionTitleConcordancy from "../components/RevisionTitleConcordancy";
 import KeywordDensityShowcase from "@/src/components/landing/KeywordDensityShowcase";
@@ -44,7 +44,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-linear-to-b from-slate-900 via-zinc-950 to-black max-w-full">
       <Header />
-      <HeroOpenRouter isAuthenticated={!!user} usage={usage} isPro={isPro} />
+      <HeroAnalyzer isAuthenticated={!!user} usage={usage} isPro={isPro} />
 
       {/* Showcase de funcionalidades */}
       <section className="flex flex-col gap-6 items-center justify-center px-6 md:px-10 py-8">

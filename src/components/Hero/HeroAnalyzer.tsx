@@ -28,13 +28,13 @@ interface UsageStats {
   remaining: number;
 }
 
-interface HeroOpenRouterProps {
+interface HeroAnalyzerProps {
   isAuthenticated: boolean;
   usage?: UsageStats;
   isPro?: boolean;
 }
 
-export default function HeroOpenRouter({ isAuthenticated, usage: initialUsage, isPro }: HeroOpenRouterProps) {
+export default function HeroAnalyzer({ isAuthenticated, usage: initialUsage, isPro }: HeroAnalyzerProps) {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +84,7 @@ export default function HeroOpenRouter({ isAuthenticated, usage: initialUsage, i
         return;
       }
 
-      const response = await fetch('/api/ai/openrouter', {
+      const response = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

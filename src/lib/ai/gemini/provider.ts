@@ -1,8 +1,8 @@
 // Proveedor de IA exclusivo para Google Gemini en OptimiSEO
 // Elimina todas las dependencias y fallbacks de Claude/OpenRouter
 
-import { getOptimalModel, MODELS, estimateCost } from './config';
-import { ErrorTracker } from '../logger/errorTracker';
+import { estimateCost } from './config';
+import { ErrorTracker } from '@/src/lib/logger/errorTracker';
 
 export interface AIProviderConfig {
   apiKey: string;

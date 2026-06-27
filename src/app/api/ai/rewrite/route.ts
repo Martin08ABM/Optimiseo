@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAIProvider } from "@/src/lib/openrouter/provider";
+import { createAIProvider } from "@/src/lib/ai/gemini/provider";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 import { canPerformAnalysis, trackAnalysis } from "@/src/lib/subscription/utils";
 

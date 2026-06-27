@@ -1,13 +1,10 @@
-// Components index - Updated for OpenRouter migration
+// Components index
 
-// Hero components (new OpenRouter version)
-export { default as HeroOpenRouter } from './Hero/HeroOpenRouter';
+// Hero components (Google Gemini analyzer)
+export { default as HeroAnalyzer } from './Hero/HeroAnalyzer';
 export { HeroForm } from './Hero/HeroForm';
 export { HeroResults } from './Hero/HeroResults';
 export { AnalysisProgress } from './AnalysisProgress';
-
-// Legacy Hero (Claude direct) - Will be removed after migration testing
-export { default as Hero } from './Hero';
 
 // Error handling
 export { ErrorBoundary, CardErrorFallback, DashboardErrorFallback, PageErrorFallback } from './ErrorBoundary/index';
@@ -44,7 +41,6 @@ export { MFASettings } from './MFASettings';
 export { MFAVerifyDialog } from './MFAVerifyDialog';
 
 // Marketing/Landing components
-export { Hero as HeroLegacy } from './Hero'; // Alias for legacy usage
 export { default as ExampleShowcase } from './landing/ExampleShowcase';
 export { default as ImageAltShowcase } from './landing/ImageAltShowcase';
 export { default as StatsSection } from './landing/StatsSection';
