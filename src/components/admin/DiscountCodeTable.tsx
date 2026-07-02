@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Modal } from '@/src/components/ui/Modal';
 import { useToast } from '@/src/components/ui/Toast';
+import { formatDate } from '@/src/utils/format';
 
 interface DiscountCode {
   id: string;
@@ -143,7 +144,7 @@ export function DiscountCodeTable({ initialCodes }: DiscountCodeTableProps) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   {code.expires_at ? (
                     <span className={isExpired ? 'text-red-600' : ''}>
-                      {new Date(code.expires_at).toLocaleDateString('es-ES')}
+                      {formatDate(code.expires_at)}
                     </span>
                   ) : (
                     <span className="text-gray-400">Sin expiración</span>

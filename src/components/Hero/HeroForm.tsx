@@ -42,6 +42,16 @@ export function HeroForm({ onSubmit, disabled, isLoading }: HeroFormProps) {
         setUrlError('Por favor ingresa una URL válida');
         return;
       }
+      try {
+        const parsed = new URL(url.trim());
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+          setUrlError('La URL debe empezar por http:// o https://');
+          return;
+        }
+      } catch {
+        setUrlError('La URL no es válida. Ejemplo: https://tu-sitio.com/articulo');
+        return;
+      }
       
       const competitorUrls = [competitor1, competitor2]
         .map(u => u.trim())
@@ -118,8 +128,9 @@ export function HeroForm({ onSubmit, disabled, isLoading }: HeroFormProps) {
         {/* Tab 1: URL input */}
         {activeTab === 'url' && (
           <div className="space-y-3">
-            <label className="block text-xs font-semibold uppercase text-gray-400 tracking-wider">URL de tu sitio web</label>
+            <label htmlFor="hero-url" className="block text-xs font-semibold uppercase text-gray-400 tracking-wider">URL de tu sitio web</label>
             <input
+              id="hero-url"
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -135,8 +146,9 @@ export function HeroForm({ onSubmit, disabled, isLoading }: HeroFormProps) {
         {activeTab === 'text' && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase text-gray-400 tracking-wider">Título del borrador (H1)</label>
+              <label htmlFor="hero-title" className="block text-xs font-semibold uppercase text-gray-400 tracking-wider">Título del borrador (H1)</label>
               <input
+                id="hero-title"
                 type="text"
                 value={textTitle}
                 onChange={(e) => setTextTitle(e.target.value)}
@@ -146,8 +158,9 @@ export function HeroForm({ onSubmit, disabled, isLoading }: HeroFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase text-gray-400 tracking-wider">Contenido del artículo</label>
+              <label htmlFor="hero-content" className="block text-xs font-semibold uppercase text-gray-400 tracking-wider">Contenido del artículo</label>
               <textarea
+                id="hero-content"
                 value={directText}
                 onChange={(e) => setDirectText(e.target.value)}
                 placeholder="Escribe, edita o pega tu contenido completo aquí para realizar una optimización de SEO en tiempo real..."

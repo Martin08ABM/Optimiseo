@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { HeroForm } from "@/src/components/Hero/HeroForm";
 import { HeroResults } from "@/src/components/Hero/HeroResults";
 import { AnalysisProgress } from "@/src/components/AnalysisProgress";
@@ -221,12 +222,18 @@ export default function HeroAnalyzer({ isAuthenticated, usage: initialUsage, isP
             <p className="text-gray-400 mb-6">
               Crea una cuenta gratuita y obtén 5 análisis SEO diarios
             </p>
-            <a
+            <Link
               href="/auth/login"
               className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               Iniciar sesión
-            </a>
+            </Link>
+            <Link
+              href="/auth/register"
+              className="inline-block px-6 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"
+            >
+              Crear cuenta gratis
+            </Link>
           </div>
         </div>
       </div>

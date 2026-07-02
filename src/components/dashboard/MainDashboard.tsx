@@ -79,9 +79,9 @@ export default async function MainDashboard() {
     <div className="flex flex-col mx-auto mt-6">
       {/* Información de la cuenta */}
       <section>
-        <p className="text-2xl font-title font-extrabold text-neutral-100">
+        <h2 className="text-2xl font-title font-extrabold text-neutral-100">
           Información del perfil:
-        </p>
+        </h2>
 
         <div className="flex flex-row text-md text-white mt-2 ml-4">
           <div className="flex flex-col gap-y-4">
@@ -109,9 +109,9 @@ export default async function MainDashboard() {
 
       {/* Seguridad y acceso a la cuenta */}
       <section className="mt-8">
-        <p className="text-2xl font-title font-extrabold text-neutral-100">
+        <h2 className="text-2xl font-title font-extrabold text-neutral-100">
           Seguridad y acceso:
-        </p>
+        </h2>
 
         <div className="flex flex-row text-md text-white mt-2 ml-4">
           <div className="flex flex-col gap-y-4">
@@ -132,9 +132,9 @@ export default async function MainDashboard() {
 
       {/* Gestión de cuenta */}
       <section className="mt-8">
-        <p className="text-2xl font-title font-extrabold text-neutral-100">
+        <h2 className="text-2xl font-title font-extrabold text-neutral-100">
           Gestión de cuenta:
-        </p>
+        </h2>
 
         <div className="flex flex-row text-md text-white mt-2 ml-4">
           <div className="flex flex-col gap-y-4 w-full max-w-md">
@@ -145,9 +145,9 @@ export default async function MainDashboard() {
 
             <Link
               href="/"
-              className="border-2 border-black rounded-xl px-2 py-2 bg-gray-400 text-center hover:bg-gray-500 mt-4"
+              className="border border-gray-700 rounded-xl px-2 py-2 bg-gray-800 text-center hover:bg-gray-700 mt-4 transition-colors"
             >
-              Volver atrás
+              Volver al inicio
             </Link>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Modal } from '@/src/components/ui/Modal';
 import { useToast } from '@/src/components/ui/Toast';
+import { formatDate } from '@/src/utils/format';
 
 interface User {
   id: string;
@@ -190,7 +191,7 @@ export function UserTable({ initialUsers, total }: UserTableProps) {
                   {user.total_analyses}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {new Date(user.created_at).toLocaleDateString('es-ES')}
+                  {formatDate(user.created_at)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span

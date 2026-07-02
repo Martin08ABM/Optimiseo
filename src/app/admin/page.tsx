@@ -2,6 +2,8 @@ import { StatsCard } from '@/src/components/admin/StatsCard';
 import { createAdminClient } from '@/src/lib/supabase/admin';
 import { RetryButton } from '@/src/components/ui/RetryButton';
 import { PRO_PRICE_MONTHLY } from '@/src/lib/config/pricing';
+import Link from 'next/link';
+import { formatNumber } from '@/src/utils/format';
 
 async function getOverviewStats() {
   const supabaseAdmin = createAdminClient();
@@ -137,11 +139,11 @@ export default async function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <StatsCard
             title="Total Análisis"
-            value={stats.analyses.total.toLocaleString()}
+            value={formatNumber(stats.analyses.total)}
           />
           <StatsCard
             title="Análisis este mes"
-            value={stats.analyses.thisMonth.toLocaleString()}
+            value={formatNumber(stats.analyses.thisMonth)}
             subtitle={`${(stats.analyses.thisMonth / 30).toFixed(1)} por día`}
           />
         </div>
@@ -168,27 +170,27 @@ export default async function AdminDashboard() {
       <div className="bg-gray-800 border-2 border-gray-600 p-6 rounded-xl shadow-lg">
         <h2 className="text-xl font-bold text-white mb-4">Acciones Rápidas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <a
+          <Link
             href="/admin/users"
             className="block p-4 border-2 border-gray-600 rounded-lg hover:border-blue-500 transition text-center bg-gray-700"
           >
             <div className="font-semibold text-white">Gestionar Usuarios</div>
             <div className="text-sm text-gray-400 mt-1">Bloquear, ver detalles</div>
-          </a>
-          <a
+          </Link>
+          <Link
             href="/admin/discount-codes"
             className="block p-4 border-2 border-gray-600 rounded-lg hover:border-blue-500 transition text-center bg-gray-700"
           >
             <div className="font-semibold text-white">Códigos de Descuento</div>
             <div className="text-sm text-gray-400 mt-1">Crear, editar, desactivar</div>
-          </a>
-          <a
+          </Link>
+          <Link
             href="/dashboard"
             className="block p-4 border-2 border-gray-600 rounded-lg hover:border-blue-500 transition text-center bg-gray-700"
           >
             <div className="font-semibold text-white">Dashboard Usuario</div>
             <div className="text-sm text-gray-400 mt-1">Vista normal</div>
-          </a>
+          </Link>
         </div>
       </div>
     </div>
