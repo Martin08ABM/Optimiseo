@@ -36,9 +36,17 @@ export default function RewriteButton({ originalText, elementType, context, onAp
 
   const handleCopy = async () => {
     if (!improved) return;
-    await navigator.clipboard.writeText(improved);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      if (!navigator.clipboard?.writeText) {
+        setError('El portapapeles no está disponible en este navegador');
+        return;
+      }
+      await navigator.clipboard.writeText(improved);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError('No se pudo copiar al portapapeles');
+    }
   };
 
   if (improved) {

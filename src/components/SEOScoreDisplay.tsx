@@ -36,14 +36,16 @@ export default function SEOScoreDisplay({ scores }: SEOScoreDisplayProps) {
     <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-4">
       <h4 className="font-semibold text-white mb-4">Puntuación SEO</h4>
 
-      <div className="flex flex-col md:flex-row items-center gap-6">
+      <div className="flex flex-col md:flex-row items-center gap-6" aria-live="polite" aria-atomic="true">
         {/* Circular gauge */}
         <div className="relative shrink-0">
-          <svg width="130" height="130" viewBox="0 0 130 130">
+          <svg width="130" height="130" viewBox="0 0 130 130" role="img" aria-labelledby="seo-score-title">
+            <title id="seo-score-title">Puntuación SEO: {scores.overall} de 100, {getScoreLabel(scores.overall)}</title>
             {/* Background circle */}
             <circle
               cx="65" cy="65" r={radius}
               fill="none" stroke="#374151" strokeWidth="10"
+              aria-hidden="true"
             />
             {/* Score arc */}
             <circle
@@ -54,11 +56,12 @@ export default function SEOScoreDisplay({ scores }: SEOScoreDisplayProps) {
               strokeDashoffset={offset}
               transform="rotate(-90 65 65)"
               className="transition-all duration-700"
+              aria-hidden="true"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-bold text-white">{scores.overall}</span>
-            <span className="text-xs text-gray-400">{getScoreLabel(scores.overall)}</span>
+            <span className="text-3xl font-bold text-white" aria-hidden="true">{scores.overall}</span>
+            <span className="text-xs text-gray-400" aria-hidden="true">{getScoreLabel(scores.overall)}</span>
           </div>
         </div>
 

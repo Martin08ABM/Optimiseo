@@ -104,16 +104,29 @@ export default function CompareClient({ analyses }: CompareClientProps) {
 
       {/* Diff view */}
       {diffResult && (
-        <div className="bg-gray-900 rounded-xl p-4 overflow-auto">
+        <div
+          className="bg-gray-900 rounded-xl p-4 overflow-auto"
+          aria-live="polite"
+          aria-atomic="false"
+        >
           <div className="flex justify-between text-xs text-gray-500 mb-3">
             <span>Anterior: {new Date(analysisA!.created_at).toLocaleDateString('es-ES')}</span>
             <span>Nuevo: {new Date(analysisB!.created_at).toLocaleDateString('es-ES')}</span>
+          </div>
+          <p className="sr-only">
+            Leyenda del diff: el fondo verde indica líneas añadidas en el nuevo análisis;
+            el fondo rojo indica líneas eliminadas respecto al anterior.
+          </p>
+          <div className="text-xs text-gray-400 mb-3 flex gap-4">
+            <span><span className="inline-block w-3 h-3 align-middle bg-green-900/50 border-l-2 border-green-500 mr-1" />Añadido</span>
+            <span><span className="inline-block w-3 h-3 align-middle bg-red-900/50 border-l-2 border-red-500 mr-1" />Eliminado</span>
           </div>
           <pre className="text-sm leading-relaxed whitespace-pre-wrap">
             {diffResult.map((part, i) => {
               if (part.added) {
                 return (
                   <span key={i} className="block bg-green-900/30 border-l-2 border-green-500 pl-2">
+                    <span className="sr-only">Añadido: </span>
                     {part.value}
                   </span>
                 );
@@ -121,6 +134,7 @@ export default function CompareClient({ analyses }: CompareClientProps) {
               if (part.removed) {
                 return (
                   <span key={i} className="block bg-red-900/30 border-l-2 border-red-500 pl-2">
+                    <span className="sr-only">Eliminado: </span>
                     {part.value}
                   </span>
                 );

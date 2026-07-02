@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '@/src/components/ui/Modal';
 import { useToast } from '@/src/components/ui/Toast';
 import { formatDate } from '@/src/utils/format';
@@ -27,8 +27,14 @@ export function UserTable({ initialUsers, total }: UserTableProps) {
   const [loading, setLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [blockTarget, setBlockTarget] = useState<User | null>(null);
   const [blockReason, setBlockReason] = useState('');
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebouncedSearch(search), 300);
+    return () => window.clearTimeout(id);
+  }, [search]);
 
   const confirmBlock = async () => {
     if (!blockTarget) return;
@@ -109,7 +115,7 @@ export function UserTable({ initialUsers, total }: UserTableProps) {
       if (filter === 'pro') return u.subscription_status === 'active';
       return true;
     })
-    .filter((u) => (search ? u.email.toLowerCase().includes(search.toLowerCase()) : true));
+    .filter((u) => (debouncedSearch ? u.email.toLowerCase().includes(debouncedSearch.toLowerCase()) : true));
 
   return (
     <div className="space-y-4">
